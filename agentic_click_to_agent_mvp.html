@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Lead — TikTok Ad Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 375px;
+    height: 720px;
+    background: #000;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  }
+
+  /* ─── STAGE 1: Feed ─── */
+  #stage-feed {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: linear-gradient(175deg, #1c2a3a 0%, #0d1420 100%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons span { font-size: 12px; }
+
+  .feed-nav {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 4px 0 8px;
+  }
+  .feed-nav span {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+  }
+  .feed-nav span.active {
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 2px;
+  }
+
+  /* video area */
+  .video-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* fake video bg — car silhouette with gradient */
+  .video-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 55%, rgba(30,60,100,0.6) 0%, transparent 70%),
+      linear-gradient(175deg, #0e1c2e 0%, #1a3050 40%, #0a1520 100%);
+  }
+  .car-silhouette {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    opacity: 0.85;
+  }
+
+  /* right action bar */
+  .action-bar {
+    position: absolute;
+    right: 14px;
+    bottom: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+  .action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .action-label { font-size: 10px; color: #fff; }
+
+  /* creator info */
+  .creator-row {
+    position: absolute;
+    bottom: 155px;
+    left: 14px;
+    right: 70px;
+  }
+  .creator-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .ad-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+    font-weight: 500;
+  }
+  .video-desc { font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.5; }
+
+  /* message entry card */
+  .msg-entry {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    background: rgba(22,22,22,0.93);
+    border-radius: 16px 16px 0 0;
+    padding: 12px 14px 28px;
+    backdrop-filter: blur(8px);
+  }
+  .entry-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .entry-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f8ef7, #2456c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #fff; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .entry-title {
+    font-size: 13px; font-weight: 600; color: #fff; flex: 1;
+  }
+  .entry-chevron { color: rgba(255,255,255,0.5); font-size: 14px; }
+  .entry-close {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    font-size: 18px; cursor: pointer; line-height: 1; padding: 0 0 0 4px;
+  }
+  .entry-sub {
+    font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 9px; padding-left: 38px;
+  }
+  .entry-input-wrap {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 22px;
+    padding: 7px 7px 7px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .entry-input-wrap:hover { background: rgba(255,255,255,0.15); }
+  .entry-placeholder {
+    flex: 1;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+  }
+  .entry-send-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #2456c8;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .entry-send-btn:hover { background: #1a3fa0; }
+  .send-arrow { color: #fff; font-size: 14px; }
+
+  /* ─── STAGE 2: Chat ─── */
+  #stage-chat {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    background: #f7f7f7;
+  }
+
+  .chat-status-bar {
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 6px;
+    font-size: 13px; font-weight: 600; color: #000;
+  }
+
+  .chat-header {
+    background: #fff;
+    border-bottom: 0.5px solid #e5e5e5;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .back-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; color: #333; padding: 0 6px 0 0; line-height: 1;
+  }
+  .ch-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, #4f8ef7, #2456c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff; font-weight: 700; flex-shrink: 0;
+  }
+  .ch-info { flex: 1; }
+  .ch-name { font-size: 13px; font-weight: 600; color: #000; }
+  .ch-status { font-size: 11px; color: #1aac6e; }
+  .reset-btn {
+    font-size: 11px; color: #888;
+    background: none; border: 1px solid #ddd;
+    border-radius: 6px; padding: 4px 8px; cursor: pointer;
+  }
+  .reset-btn:hover { color: #333; border-color: #aaa; }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ad source card — sent as a user message */
+  .ad-card-wrap {
+    align-self: flex-end;
+    max-width: 82%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .ad-card {
+    background: #2456c8;
+    border-radius: 16px 4px 16px 16px;
+    overflow: hidden;
+    cursor: pointer;
+    width: 210px;
+    transition: opacity 0.15s;
+  }
+  .ad-card:hover { opacity: 0.9; }
+  .ad-card-thumb {
+    width: 100%;
+    height: 88px;
+    background: linear-gradient(160deg, #0e1c2e 0%, #1a3050 55%, #0a1520 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .ad-card-tag {
+    position: absolute;
+    top: 6px; left: 8px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.8);
+    background: rgba(0,0,0,0.35);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .ad-card-body {
+    padding: 8px 10px 9px;
+    border-top: 0.5px solid rgba(255,255,255,0.15);
+  }
+  .ad-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+  .ad-card-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .ad-card-sub span { margin-left: auto; }
+
+  /* messages */
+  .msg { display: flex; flex-direction: column; max-width: 82%; }
+  .msg.agent { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  .bubble {
+    padding: 9px 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .agent .bubble {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    color: #111;
+    border-radius: 4px 16px 16px 16px;
+  }
+  .user .bubble {
+    background: #2456c8;
+    color: #fff;
+    border-radius: 16px 4px 16px 16px;
+  }
+
+  /* progress */
+  .progress {
+    display: flex; gap: 3px;
+    align-self: flex-start;
+    width: 100%;
+    padding: 0 2px;
+  }
+  .pd {
+    height: 2px; flex: 1; border-radius: 2px;
+    background: #ddd;
+    transition: background 0.3s;
+  }
+  .pd.done { background: #2456c8; }
+  .pd.cur { background: #87aef0; }
+
+  /* inline form */
+  .inline-form {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    max-width: 88%;
+  }
+  .form-q {
+    font-size: 13px; color: #111;
+    margin-bottom: 8px; line-height: 1.5;
+  }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    padding: 5px 11px;
+    border-radius: 18px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+    color: #333;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .chip:hover { border-color: #2456c8; color: #2456c8; }
+  .chip.disabled { opacity: 0.35; cursor: default !important; }
+  .chip.disabled:hover { border-color: #ddd; color: #333; }
+  .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .form-q-text { font-size: 13px; color: #111; line-height: 1.5; flex: 1; }
+  .edit-btn {
+    font-size: 11px; color: #2456c8; background: none;
+    border: 1px solid #c8d8f5; border-radius: 10px;
+    padding: 2px 8px; cursor: pointer; white-space: nowrap;
+    margin-left: 8px; flex-shrink: 0; display: none;
+  }
+  .edit-btn:hover { background: #e8effd; }
+  .inline-form.locked .edit-btn { display: inline-block; }
+  .chip.sel { background: #e8effd; border-color: #2456c8; color: #2456c8; font-weight: 600; }
+
+  /* name/phone form */
+  .contact-form {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .contact-row { display: flex; gap: 6px; margin-top: 8px; }
+  .fi {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 7px 9px;
+    font-size: 12px;
+    color: #111;
+    outline: none;
+    background: #fafafa;
+    min-width: 0;
+  }
+  .fi:focus { border-color: #2456c8; background: #fff; }
+  .sub-btn {
+    padding: 7px 11px;
+    background: #2456c8;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sub-btn:hover { background: #1a3fa0; }
+  .privacy-note {
+    font-size: 10px; color: #bbb; margin-top: 5px;
+    display: flex; align-items: center; gap: 3px;
+  }
+
+  /* result card */
+  .result-card {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 12px;
+    align-self: flex-start;
+    max-width: 92%;
+  }
+  .rc-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 8px; }
+  .rc-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; padding: 4px 0;
+    border-bottom: 0.5px solid #f0f0f0;
+  }
+  .rc-row:last-of-type { border-bottom: none; }
+  .rk { color: #888; }
+  .rv { color: #111; font-weight: 600; }
+  .cta-row { display: flex; gap: 6px; margin-top: 10px; }
+  .cta-p {
+    flex: 1; padding: 9px; background: #2456c8; color: #fff;
+    border: none; border-radius: 10px; font-size: 12px; cursor: pointer; font-weight: 600;
+  }
+  .cta-p:hover { background: #1a3fa0; }
+  .cta-s {
+    flex: 1; padding: 9px; background: #fff; color: #2456c8;
+    border: 1px solid #2456c8; border-radius: 10px; font-size: 12px; cursor: pointer;
+  }
+
+  /* faq bubble */
+  .faq-bubble {
+    background: #e8effd;
+    border: 0.5px solid #c0d0f5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .faq-bubble p { font-size: 13px; color: #1a3080; line-height: 1.6; }
+  .resume-link {
+    font-size: 11px; color: #2456c8; margin-top: 6px;
+    cursor: pointer; text-decoration: underline; display: inline-block;
+  }
+
+  /* typing */
+  .typing-bubble {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 14px;
+    align-self: flex-start;
+    display: flex; gap: 4px; align-items: center;
+  }
+  .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #bbb;
+    animation: bop 1.1s ease-in-out infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.18s; }
+  .dot:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes bop {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-5px); }
+  }
+
+  /* quick questions */
+  .quick-qs {
+    padding: 6px 12px 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    background: #fff;
+    border-top: 0.5px solid #eee;
+  }
+  .qq {
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    background: #fafafa;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .qq:hover { border-color: #2456c8; color: #2456c8; background: #f0f4ff; }
+
+  /* input bar */
+  .input-bar {
+    background: #fff;
+    border-top: 0.5px solid #eee;
+    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .chat-input {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #111;
+    outline: none;
+    background: #fafafa;
+    font-family: inherit;
+  }
+  .chat-input:focus { border-color: #2456c8; background: #fff; }
+  .send-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #2456c8;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.12s;
+  }
+  .send-btn:hover { background: #1a3fa0; }
+  .send-btn svg { width: 15px; height: 15px; fill: #fff; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ── STAGE 1: TikTok Feed ── -->
+  <div id="stage-feed" style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;background:linear-gradient(175deg,#1c2a3a 0%,#0d1420 100%);">
+
+    <!-- status bar -->
+    <div class="status-bar">
+      <span>9:51</span>
+      <div class="status-icons">
+        <span>●</span>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="white" opacity="0.9"><path d="M8 2.4C5.3 2.4 2.9 3.5 1.2 5.3L0 4C2.1 1.5 5 0 8 0s5.9 1.5 8 4l-1.2 1.3C13.1 3.5 10.7 2.4 8 2.4z"/><path d="M8 5.6c-1.7 0-3.2.7-4.3 1.8L2.5 6.1C3.9 4.6 5.9 3.7 8 3.7s4.1.9 5.5 2.4l-1.2 1.3C11.2 6.3 9.7 5.6 8 5.6z"/><circle cx="8" cy="10" r="2"/></svg>
+        <svg width="26" height="12" viewBox="0 0 26 12" fill="white" opacity="0.9"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" stroke-width="1" fill="none"/><rect x="22" y="4" width="2" height="4" rx="1" fill="white"/><rect x="1" y="2" width="16" height="8" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+
+    <!-- nav tabs -->
+    <div class="feed-nav">
+      <span>关注</span>
+      <span class="active">推荐</span>
+    </div>
+
+    <!-- video area -->
+    <div class="video-area" style="flex:1;position:relative;overflow:hidden;">
+      <div class="video-bg"></div>
+
+      <!-- car SVG silhouette -->
+      <svg style="position:absolute;bottom:130px;left:50%;transform:translateX(-50%);width:270px;opacity:0.7;" viewBox="0 0 270 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 80 L50 80 L65 45 Q90 25 135 22 Q180 20 205 45 L220 80 L240 80 L245 95 L25 95 Z" fill="#4a7ab5" stroke="#6a9ad5" stroke-width="1"/>
+        <path d="M70 78 L80 48 Q100 32 135 30 Q168 29 188 48 L200 78 Z" fill="#2a5080" stroke="#4a7ab5" stroke-width="0.5"/>
+        <ellipse cx="72" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>
+        <ellipse cx="72" cy="96" rx="9" ry="7" fill="#3a5a80" stroke="#5a8ab0" stroke-width="1"/>
+        <ellipse cx="198" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>
+        <ellipse cx="198" cy="96" rx="9" ry="7" fill="#3a5a80" stroke="#5a8ab0" stroke-width="1"/>
+        <rect x="25" y="82" width="220" height="8" rx="2" fill="#3a6090" opacity="0.6"/>
+        <polygon points="65,78 72,55 82,48 88,78" fill="#5a8ab5" opacity="0.8"/>
+        <polygon points="182,78 188,55 198,48 205,78" fill="#5a8ab5" opacity="0.8"/>
+        <rect x="28" y="68" width="12" height="6" rx="2" fill="#fff9c4" opacity="0.9"/>
+        <rect x="230" y="68" width="12" height="6" rx="2" fill="#ffaaaa" opacity="0.7"/>
+        <rect x="88" y="30" width="6" height="3" rx="1" fill="#87bcf5" opacity="0.6"/>
+      </svg>
+
+      <!-- glow under car -->
+      <div style="position:absolute;bottom:128px;left:50%;transform:translateX(-50%);width:200px;height:10px;background:rgba(74,122,181,0.25);filter:blur(8px);border-radius:50%;"></div>
+
+      <!-- right actions -->
+      <div class="action-bar">
+        <div class="action-item">
+          <div class="action-icon">♥</div>
+          <span class="action-label">2.3k</span>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">💬</div>
+          <span class="action-label">148</span>
+        </div>
+        <div class="action-item">
+          <div class="action-icon" style="font-size:15px;">↗</div>
+          <span class="action-label">分享</span>
+        </div>
+      </div>
+
+      <!-- creator info -->
+      <div class="creator-row">
+        <div class="creator-name">@BMW_Official</div>
+        <p class="video-desc">
+          <span class="ad-tag">广告</span>2025款 BMW X5 限时优惠，到店即享专属礼遇 🚗
+        </p>
+      </div>
+
+      <!-- message entry card -->
+      <div class="msg-entry">
+        <div class="entry-header">
+          <div class="entry-avatar">BM</div>
+          <div class="entry-title">和我们聊聊 <span class="entry-chevron">›</span></div>
+          <button class="entry-close" aria-label="关闭">×</button>
+        </div>
+        <div class="entry-sub">点击问题，开始聊天。</div>
+        <div class="entry-input-wrap" onclick="enterChat('Can I book an appointment?')">
+          <span class="entry-placeholder">Can I book an appointment?</span>
+          <button class="entry-send-btn" aria-label="发送">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STAGE 2: Chat ── -->
+  <div id="stage-chat" style="display:none;width:100%;height:100%;flex-direction:column;">
+
+    <!-- status bar -->
+    <div class="chat-status-bar">
+      <span>9:51</span>
+      <div style="display:flex;gap:5px;align-items:center;font-size:11px;font-weight:500;">
+        <span>●●●</span>
+        <span>WiFi</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <!-- header -->
+    <div class="chat-header">
+      <button class="back-btn" onclick="backToFeed()" aria-label="返回">‹</button>
+      <div class="ch-avatar">BM</div>
+      <div class="ch-info">
+        <div class="ch-name">BMW 官方助手</div>
+        <div class="ch-status">● 在线服务中</div>
+      </div>
+      <button class="reset-btn" onclick="resetChat()">↺ 重置</button>
+    </div>
+
+    <!-- messages -->
+    <div class="chat-body" id="cb"></div>
+
+    <!-- quick questions -->
+    <div class="quick-qs">
+      <div class="qq" onclick="askFaq('油耗怎么样？')">油耗怎么样？</div>
+      <div class="qq" onclick="askFaq('有哪些颜色？')">有哪些颜色？</div>
+      <div class="qq" onclick="askFaq('支持贷款吗？')">支持贷款吗？</div>
+      <div class="qq" onclick="askFaq('试驾怎么预约？')">试驾怎么预约？</div>
+    </div>
+
+    <!-- input bar -->
+    <div class="input-bar">
+      <input class="chat-input" id="user-input" placeholder="有问题随时问我..." onkeydown="if(event.key==='Enter')sendUserMsg()" />
+      <button class="send-btn" onclick="sendUserMsg()" aria-label="发送">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var step = 0, savedStep = 0, answers = {};
+var faqMap = {
+  '油耗怎么样？': 'BMW X5 xDrive40i 综合油耗约 8.9L/100km，高速工况可降至 7.5L 左右，同级别中偏优水平。',
+  '有哪些颜色？': '2025款 X5 提供 8 种外观色：矿石白、碳黑、地中海蓝、莱比锡绿等，内饰有米色、黑色、棕色三种皮质可选。',
+  '支持贷款吗？': 'BMW 金融提供 24/36/48 期方案，最低首付 30%，部分活动车型享零利率，顾问会推荐最优方案。',
+  '试驾怎么预约？': '提前 1 天预约即可，试驾约 45 分钟，全程顾问讲解，无购买压力。'
+};
+
+function $$(id){ return document.getElementById(id); }
+function cbody(){ return $$('cb'); }
+function scrollDown(){ setTimeout(function(){ cbody().scrollTop = cbody().scrollHeight; }, 60); }
+
+function addEl(el){ cbody().appendChild(el); scrollDown(); }
+
+function agentBubble(html){
+  var m = document.createElement('div'); m.className = 'msg agent';
+  var b = document.createElement('div'); b.className = 'bubble'; b.innerHTML = html;
+  m.appendChild(b); return m;
+}
+function userBubble(text){
+  var m = document.createElement('div'); m.className = 'msg user';
+  var b = document.createElement('div'); b.className = 'bubble'; b.textContent = text;
+  m.appendChild(b); return m;
+}
+function showTyping(){
+  var t = document.createElement('div'); t.className = 'typing-bubble'; t.id = 'typing';
+  for(var i=0;i<3;i++){ var d=document.createElement('div'); d.className='dot'; t.appendChild(d); }
+  addEl(t);
+}
+function removeTyping(){ var t=$$('typing'); if(t) t.remove(); }
+
+function progressBar(cur, total){
+  var p = document.createElement('div'); p.className = 'progress';
+  for(var i=0;i<total;i++){
+    var d=document.createElement('div');
+    d.className='pd'+(i<cur?' done':i===cur?' cur':'');
+    p.appendChild(d);
+  }
+  return p;
+}
+
+function chipForm(q, opts, key, nextFn, formId){
+  var f=document.createElement('div'); f.className='inline-form'; f.id=formId||'';
+
+  // header row with question + edit button
+  var hdr=document.createElement('div'); hdr.className='form-header';
+  var ql=document.createElement('div'); ql.className='form-q-text'; ql.textContent=q;
+  var eb=document.createElement('button'); eb.className='edit-btn'; eb.textContent='修改';
+  hdr.appendChild(ql); hdr.appendChild(eb);
+
+  var cg=document.createElement('div'); cg.className='chip-group';
+
+  function lockForm(){
+    f.classList.add('locked');
+    cg.querySelectorAll('.chip').forEach(function(x){
+      x.classList.add('disabled'); x.style.cursor='default';
+    });
+  }
+  function unlockForm(){
+    f.classList.remove('locked');
+    cg.querySelectorAll('.chip').forEach(function(x){
+      x.classList.remove('disabled'); x.style.cursor='pointer';
+    });
+  }
+
+  opts.forEach(function(o){
+    var c=document.createElement('div'); c.className='chip'; c.textContent=o;
+    c.onclick=function(){
+      if(c.classList.contains('disabled')) return;
+      cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+      c.classList.add('sel');
+      answers[key]=o;
+      lockForm();
+      // remove everything after this form in the chat
+      var cb=cbody(); var nodes=Array.from(cb.children);
+      var idx=nodes.indexOf(f);
+      for(var i=nodes.length-1;i>idx;i--){ cb.removeChild(nodes[i]); }
+      setTimeout(function(){ nextFn(); }, 220);
+    };
+    cg.appendChild(c);
+  });
+
+  eb.onclick=function(){
+    unlockForm();
+    // remove everything after this form
+    var cb=cbody(); var nodes=Array.from(cb.children);
+    var idx=nodes.indexOf(f);
+    for(var i=nodes.length-1;i>idx;i--){ cb.removeChild(nodes[i]); }
+    // reset step to this form's step
+    step=parseInt(f.dataset.step||'1');
+    cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+    delete answers[key];
+  };
+
+  f.appendChild(hdr); f.appendChild(cg); return f;
+}
+
+function enterChat(firstMsg){
+  $$('stage-feed').style.display='none';
+  var sc=$$('stage-chat'); sc.style.display='flex';
+  cbody().innerHTML='';
+  step=0; answers={};
+
+  // ad source card (sent as user message, tappable to go back)
+  var wrap=document.createElement('div'); wrap.className='ad-card-wrap';
+  var card=document.createElement('div'); card.className='ad-card';
+  card.onclick=backToFeed;
+  card.innerHTML=
+    '<div class="ad-card-thumb">'+
+      '<div class="ad-card-tag">广告</div>'+
+      '<svg width="110" height="50" viewBox="0 0 270 120" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.75">'+
+        '<path d="M30 80 L50 80 L65 45 Q90 25 135 22 Q180 20 205 45 L220 80 L240 80 L245 95 L25 95 Z" fill="#4a7ab5" stroke="#6a9ad5" stroke-width="1"/>'+
+        '<path d="M70 78 L80 48 Q100 32 135 30 Q168 29 188 48 L200 78 Z" fill="#2a5080"/>'+
+        '<ellipse cx="72" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>'+
+        '<ellipse cx="72" cy="96" rx="9" ry="7" fill="#3a5a80"/>'+
+        '<ellipse cx="198" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>'+
+        '<ellipse cx="198" cy="96" rx="9" ry="7" fill="#3a5a80"/>'+
+        '<rect x="28" y="68" width="12" height="6" rx="2" fill="#fff9c4" opacity="0.9"/>'+
+        '<rect x="230" y="68" width="12" height="6" rx="2" fill="#ffaaaa" opacity="0.7"/>'+
+      '</svg>'+
+    '</div>'+
+    '<div class="ad-card-body">'+
+      '<div class="ad-card-title">2025款 BMW X5 限时优惠</div>'+
+      '<div class="ad-card-sub">点击查看广告 <span>›</span></div>'+
+    '</div>';
+  wrap.appendChild(card);
+  addEl(wrap);
+
+  // user's first message from feed
+  addEl(userBubble(firstMsg));
+
+  setTimeout(function(){
+    showTyping();
+    setTimeout(function(){
+      removeTyping();
+      addEl(agentBubble('您好！很高兴为您服务 😊<br>我来帮您快速了解 X5 是否适合您，顺便安排试驾——只需回答几个小问题。'));
+      setTimeout(showStep1, 350);
+    }, 900);
+  }, 350);
+}
+
+function showStep1(){
+  addEl(progressBar(0,3));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var f=chipForm('您目前有在开车吗？',['在开燃油车','在开新能源','暂时没有'],'car',showStep2,'form-step1');
+    f.dataset.step='1'; addEl(f); step=1;
+  }, 650);
+}
+
+function showStep2(){
+  addEl(progressBar(1,3));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var f=chipForm('您的购车预算区间？',['50万以下','50–70万','70万以上','还在考虑中'],'budget',showStep3,'form-step2');
+    f.dataset.step='2'; addEl(f); step=2;
+  }, 550);
+}
+
+function showStep3(){
+  addEl(progressBar(2,3));
+  addEl(agentBubble('了解 ✓ 最后一步，留下联系方式，我帮您安排一次无压力试驾 🚗'));
+
+  var f=document.createElement('div'); f.className='contact-form';
+  var ql=document.createElement('div'); ql.style.cssText='font-size:13px;color:#111;line-height:1.5;'; ql.textContent='您的姓名和手机号';
+  var nr=document.createElement('div'); nr.className='contact-row';
+  var ni=document.createElement('input'); ni.className='fi'; ni.placeholder='姓名'; ni.id='ni'; ni.style.maxWidth='75px';
+  var pi=document.createElement('input'); pi.className='fi'; pi.placeholder='手机号码'; pi.id='pi';
+  var sb=document.createElement('button'); sb.className='sub-btn'; sb.textContent='提交';
+  sb.onclick=function(){
+    var n=$$('ni').value||'您'; var p=$$('pi').value||'已记录';
+    addEl(userBubble(n+' / '+p)); f.remove(); showResult();
+  };
+  nr.appendChild(ni); nr.appendChild(pi); nr.appendChild(sb);
+
+  var priv=document.createElement('div'); priv.className='privacy-note';
+  priv.innerHTML='🔒 仅用于预约，不作其他用途';
+
+  f.appendChild(ql); f.appendChild(nr); f.appendChild(priv);
+  addEl(f); step=3;
+}
+
+function showResult(){
+  addEl(progressBar(3,3));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    addEl(agentBubble('根据您的情况，为您匹配到专属方案 ✨'));
+
+    var rc=document.createElement('div'); rc.className='result-card';
+    rc.innerHTML=
+      '<div class="rc-title">您的专属方案</div>'+
+      '<div class="rc-row"><span class="rk">推荐车型</span><span class="rv">BMW X5 xDrive40i</span></div>'+
+      '<div class="rc-row"><span class="rk">参考落地价</span><span class="rv">约 64.8 万</span></div>'+
+      '<div class="rc-row"><span class="rk">最近门店</span><span class="rv">中关村宝马体验中心</span></div>'+
+      '<div class="rc-row"><span class="rk">可预约时段</span><span class="rv">明日 10:00 / 14:00</span></div>'+
+      '<div class="cta-row">'+
+        '<button class="cta-p">预约试驾</button>'+
+        '<button class="cta-s">继续咨询</button>'+
+      '</div>';
+    addEl(rc);
+
+    setTimeout(function(){
+      addEl(agentBubble('有任何问题随时问我，比如贷款方案、颜色配置等 😊'));
+      step=4;
+    }, 400);
+  }, 950);
+}
+
+function makeFaqBubble(ans, onResume){
+  var fa=document.createElement('div'); fa.className='faq-bubble';
+  var p=document.createElement('p'); p.textContent=ans; fa.appendChild(p);
+  if(onResume){
+    var r=document.createElement('div'); r.className='resume-link';
+    r.textContent='↩ 继续填写信息';
+    r.onclick=function(){
+      r.style.display='none';   // hide link, keep FAQ answer visible
+      onResume();
+    };
+    fa.appendChild(r);
+  }
+  return fa;
+}
+
+function askFaq(q){
+  savedStep=step;
+  addEl(userBubble(q));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var ans=faqMap[q]||'这个问题稍后顾问会为您详细解答。';
+    var resume=step<4 ? function(){ resumeFlow(); } : null;
+    addEl(makeFaqBubble(ans, resume));
+  }, 750);
+}
+
+function sendUserMsg(){
+  var inp=$$('user-input'); var val=inp.value.trim(); if(!val) return;
+  inp.value=''; savedStep=step;
+  addEl(userBubble(val));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var reply='感谢您的问题！我们的顾问稍后会为您详细解答。';
+    for(var k in faqMap){
+      if(val.indexOf(k.slice(0,3))>-1){ reply=faqMap[k]; break; }
+    }
+    var resume=step<4 ? function(){ resumeFlow(); } : null;
+    addEl(makeFaqBubble(reply, resume));
+  }, 800);
+}
+
+function resumeFlow(){
+  // simply append the next step — never remove any existing messages
+  if(savedStep<=1) showStep1();
+  else if(savedStep===2) showStep2();
+  else if(savedStep===3) showStep3();
+}
+
+function resetChat(){ enterChat('Can I book an appointment?'); }
+function backToFeed(){
+  $$('stage-chat').style.display='none';
+  $$('stage-feed').style.display='flex';
+}
+</script>
+</body>
+</html>
