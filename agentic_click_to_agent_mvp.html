@@ -729,7 +729,6 @@ function progressBar(cur, total){
 function chipForm(q, opts, key, nextFn, formId){
   var f=document.createElement('div'); f.className='inline-form'; f.id=formId||'';
 
-  // header row with question + edit button
   var hdr=document.createElement('div'); hdr.className='form-header';
   var ql=document.createElement('div'); ql.className='form-q-text'; ql.textContent=q;
   var eb=document.createElement('button'); eb.className='edit-btn'; eb.textContent='修改';
@@ -754,32 +753,62 @@ function chipForm(q, opts, key, nextFn, formId){
     var c=document.createElement('div'); c.className='chip'; c.textContent=o;
     c.onclick=function(){
       if(c.classList.contains('disabled')) return;
+      var wasEdit = f.classList.contains('editing');
       cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
       c.classList.add('sel');
       answers[key]=o;
+      f.classList.remove('editing');
       lockForm();
-      // remove everything after this form in the chat
-      var cb=cbody(); var nodes=Array.from(cb.children);
-      var idx=nodes.indexOf(f);
-      for(var i=nodes.length-1;i>idx;i--){ cb.removeChild(nodes[i]); }
-      setTimeout(function(){ nextFn(); }, 220);
+
+      if(wasEdit){
+        // editing mode: don't truncate subsequent steps, just re-lock and
+        // advance to wherever the flow had reached
+        resumeFromStep();
+      } else {
+        setTimeout(function(){ nextFn(); }, 220);
+      }
     };
     cg.appendChild(c);
   });
 
   eb.onclick=function(){
+    // mark as editing — unlock only this card, leave everything else intact
+    f.classList.add('editing');
     unlockForm();
-    // remove everything after this form
-    var cb=cbody(); var nodes=Array.from(cb.children);
-    var idx=nodes.indexOf(f);
-    for(var i=nodes.length-1;i>idx;i--){ cb.removeChild(nodes[i]); }
-    // reset step to this form's step
-    step=parseInt(f.dataset.step||'1');
     cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
-    delete answers[key];
+    // restore previous selection visually
+    if(answers[key]){
+      cg.querySelectorAll('.chip').forEach(function(x){
+        if(x.textContent===answers[key]) x.classList.add('sel');
+      });
+    }
   };
 
   f.appendChild(hdr); f.appendChild(cg); return f;
+}
+
+// Resume from the furthest step already reached, without re-rendering completed steps
+function resumeFromStep(){
+  // All existing form cards stay. Just continue from current step state.
+  if(step===4){
+    // already at result — re-render result to reflect updated answers
+    // remove old result card and re-append
+    var cb=cbody(); var nodes=Array.from(cb.children);
+    // find and remove result-card and anything after step3 form
+    var form3=$$('form-step3');
+    if(form3){
+      var idx=nodes.indexOf(form3);
+      for(var i=nodes.length-1;i>idx;i--){ cb.removeChild(nodes[i]); }
+      step=3;
+      setTimeout(function(){ showResult(); }, 300);
+    }
+  } else if(step===3){
+    // contact form is already there, nothing to do
+  } else if(step===2){
+    setTimeout(function(){ showStep3(); }, 300);
+  } else if(step===1){
+    setTimeout(function(){ showStep2(); }, 300);
+  }
 }
 
 function enterChat(firstMsg){
