@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Lead — TikTok Ad Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 375px;
+    height: 720px;
+    background: #000;
+    border-radius: 40px;
+    overflow: hidden; /* clips the rounded corners */
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── STAGE 1: Feed ─── */
+  #stage-feed {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: linear-gradient(175deg, #1c2a3a 0%, #0d1420 100%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons span { font-size: 12px; }
+
+  .feed-nav {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 4px 0 8px;
+  }
+  .feed-nav span {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+  }
+  .feed-nav span.active {
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 2px;
+  }
+
+  /* video area */
+  .video-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* fake video bg — car silhouette with gradient */
+  .video-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 55%, rgba(30,60,100,0.6) 0%, transparent 70%),
+      linear-gradient(175deg, #0e1c2e 0%, #1a3050 40%, #0a1520 100%);
+  }
+  .car-silhouette {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    opacity: 0.85;
+  }
+
+  /* right action bar */
+  .action-bar {
+    position: absolute;
+    right: 14px;
+    bottom: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+  .action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .action-label { font-size: 10px; color: #fff; }
+
+  /* creator info */
+  .creator-row {
+    position: absolute;
+    bottom: 155px;
+    left: 14px;
+    right: 70px;
+  }
+  .creator-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .ad-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+    font-weight: 500;
+  }
+  .video-desc { font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.5; }
+
+  /* message entry card */
+  .msg-entry {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    background: rgba(22,22,22,0.93);
+    border-radius: 16px 16px 0 0;
+    padding: 12px 14px 28px;
+    backdrop-filter: blur(8px);
+  }
+  .entry-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .entry-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f8ef7, #2456c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #fff; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .entry-title {
+    font-size: 13px; font-weight: 600; color: #fff; flex: 1;
+  }
+  .entry-chevron { color: rgba(255,255,255,0.5); font-size: 14px; }
+  .entry-close {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    font-size: 18px; cursor: pointer; line-height: 1; padding: 0 0 0 4px;
+  }
+  .entry-sub {
+    font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 9px; padding-left: 38px;
+  }
+  .entry-input-wrap {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 22px;
+    padding: 7px 7px 7px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .entry-input-wrap:hover { background: rgba(255,255,255,0.15); }
+  .entry-placeholder {
+    flex: 1;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+  }
+  .entry-send-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #2456c8;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .entry-send-btn:hover { background: #1a3fa0; }
+  .send-arrow { color: #fff; font-size: 14px; }
+
+  /* ─── STAGE 2: Chat ─── */
+  #stage-chat {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    background: #f7f7f7;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .chat-status-bar {
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 6px;
+    font-size: 13px; font-weight: 600; color: #000;
+  }
+
+  .chat-header {
+    background: #fff;
+    border-bottom: 0.5px solid #e5e5e5;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .back-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; color: #333; padding: 0 6px 0 0; line-height: 1;
+  }
+  .ch-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, #4f8ef7, #2456c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff; font-weight: 700; flex-shrink: 0;
+  }
+  .ch-info { flex: 1; }
+  .ch-name { font-size: 13px; font-weight: 600; color: #000; }
+  .ch-status { font-size: 11px; color: #1aac6e; }
+  .reset-btn {
+    font-size: 11px; color: #888;
+    background: none; border: 1px solid #ddd;
+    border-radius: 6px; padding: 4px 8px; cursor: pointer;
+  }
+  .reset-btn:hover { color: #333; border-color: #aaa; }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    scroll-behavior: smooth;
+  }
+
+  /* welcome card — normal agent message card */
+  .welcome-card {
+    align-self: flex-start;
+    width: 86%;
+    min-width: 86%;
+    flex-shrink: 0;
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .wc-image {
+    width: 100%;
+    height: 110px;
+    background: linear-gradient(160deg, #0b1a2e 0%, #1a3560 50%, #0a1a30 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .wc-image svg { width: 190px; opacity: 0.88; }
+  .wc-ad-tag {
+    position: absolute;
+    top: 7px; left: 9px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.75);
+    background: rgba(0,0,0,0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .wc-model-tag {
+    position: absolute;
+    top: 7px; right: 9px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .wc-body {
+    padding: 10px 12px 4px;
+  }
+  .wc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 3px;
+  }
+  .wc-desc {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .wc-q-section {
+    padding: 10px 12px 12px;
+    border-top: 0.5px solid #f0f0f0;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .wc-q-greet {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .fc-pb {
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px 0;
+  }
+  .fc-dot {
+    height: 3px;
+    flex: 1;
+    border-radius: 2px;
+    background: #e5e5e5;
+    cursor: pointer;
+    transition: background 0.25s, opacity 0.15s;
+  }
+  .fc-dot:hover { opacity: 0.75; }
+  .fc-dot[style*="cursor: default"] { pointer-events: none; }
+  .fc-dot.done { background: #2456c8; }
+  .fc-dot.cur  { background: #87aef0; }
+  .wc-shortcuts {
+    border-top: 0.5px solid #f0f0f0;
+  }
+  .wc-shortcut {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-bottom: 0.5px solid #f0f0f0;
+    font-size: 12px;
+    color: #222;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .wc-shortcut:last-child { border-bottom: none; }
+  .wc-shortcut:hover { background: #f8f8f8; }
+  .wc-shortcut-arrow { color: #bbb; font-size: 13px; }
+
+  /* messages */
+  .msg { display: flex; flex-direction: column; max-width: 82%; }
+  .msg.agent { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  .bubble {
+    padding: 9px 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .agent .bubble {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    color: #111;
+    border-radius: 4px 16px 16px 16px;
+  }
+  .user .bubble {
+    background: #2456c8;
+    color: #fff;
+    border-radius: 16px 4px 16px 16px;
+  }
+
+  /* progress */
+  .progress {
+    display: flex; gap: 3px;
+    align-self: flex-start;
+    width: 100%;
+    padding: 0 2px;
+  }
+  .pd {
+    height: 2px; flex: 1; border-radius: 2px;
+    background: #ddd;
+    transition: background 0.3s;
+  }
+  .pd.done { background: #2456c8; }
+  .pd.cur { background: #87aef0; }
+
+  /* inline form */
+  .inline-form {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    max-width: 88%;
+  }
+  .form-q {
+    font-size: 13px; color: #111;
+    margin-bottom: 8px; line-height: 1.5;
+  }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    padding: 5px 11px;
+    border-radius: 18px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+    color: #333;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .chip:hover { border-color: #2456c8; color: #2456c8; }
+  .chip.disabled { opacity: 0.35; cursor: default !important; }
+  .chip.disabled:hover { border-color: #ddd; color: #333; }
+  .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .form-q-text { font-size: 13px; color: #111; line-height: 1.5; flex: 1; }
+  .edit-btn {
+    font-size: 11px; color: #2456c8; background: none;
+    border: 1px solid #c8d8f5; border-radius: 10px;
+    padding: 2px 8px; cursor: pointer; white-space: nowrap;
+    margin-left: 8px; flex-shrink: 0; display: none;
+  }
+  .edit-btn:hover { background: #e8effd; }
+  .skip-btn {
+    font-size: 11px; color: #aaa; background: none;
+    border: none; padding: 6px 0 0; cursor: pointer;
+    text-decoration: underline; display: block;
+  }
+  .skip-btn:hover { color: #666; }
+  .chip.other-chip { border-style: dashed; color: #888; }
+  .chip.other-chip:hover { border-color: #2456c8; color: #2456c8; }
+  .free-input-row { display: flex; gap: 5px; margin-top: 8px; }
+  .free-input {
+    flex: 1; border: 1px solid #2456c8; border-radius: 8px;
+    padding: 6px 9px; font-size: 12px; color: #111;
+    outline: none; background: #f5f8ff; font-family: inherit;
+  }
+  .free-confirm { padding: 6px 10px; background: #2456c8; color: #fff; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; }
+  .dm-note { font-size: 11px; color: #888; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .inline-form.locked .edit-btn { display: inline-block; }
+  .chip.sel { background: #e8effd; border-color: #2456c8; color: #2456c8; font-weight: 600; }
+
+  /* name/phone form */
+  .contact-form {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .contact-row { display: flex; gap: 6px; margin-top: 8px; }
+  .fi {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 7px 9px;
+    font-size: 12px;
+    color: #111;
+    outline: none;
+    background: #fafafa;
+    min-width: 0;
+  }
+  .fi:focus { border-color: #2456c8; background: #fff; }
+  .sub-btn {
+    padding: 7px 11px;
+    background: #2456c8;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sub-btn:hover { background: #1a3fa0; }
+  .privacy-note {
+    font-size: 10px; color: #bbb; margin-top: 5px;
+    display: flex; align-items: center; gap: 3px;
+  }
+
+  /* result card */
+  .result-card {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 12px;
+    align-self: flex-start;
+    max-width: 92%;
+  }
+  .rc-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 8px; }
+  .rc-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; padding: 4px 0;
+    border-bottom: 0.5px solid #f0f0f0;
+  }
+  .rc-row:last-of-type { border-bottom: none; }
+  .rk { color: #888; }
+  .rv { color: #111; font-weight: 600; }
+  .cta-row { display: flex; gap: 6px; margin-top: 10px; }
+  .cta-p {
+    flex: 1; padding: 9px; background: #2456c8; color: #fff;
+    border: none; border-radius: 10px; font-size: 12px; cursor: pointer; font-weight: 600;
+  }
+  .cta-p:hover { background: #1a3fa0; }
+  .cta-s {
+    flex: 1; padding: 9px; background: #fff; color: #2456c8;
+    border: 1px solid #2456c8; border-radius: 10px; font-size: 12px; cursor: pointer;
+  }
+
+  /* faq bubble */
+  .faq-bubble {
+    background: #e8effd;
+    border: 0.5px solid #c0d0f5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .faq-bubble p { font-size: 13px; color: #1a3080; line-height: 1.6; }
+  .resume-link {
+    font-size: 11px; color: #2456c8; margin-top: 6px;
+    cursor: pointer; text-decoration: underline; display: inline-block;
+  }
+
+  /* typing */
+  .typing-bubble {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 14px;
+    align-self: flex-start;
+    display: flex; gap: 4px; align-items: center;
+  }
+  .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #bbb;
+    animation: bop 1.1s ease-in-out infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.18s; }
+  .dot:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes bop {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-5px); }
+  }
+
+  /* ── hint bar (dual mode) ── */
+  .faq-bar {
+    background: #fff;
+    border-top: 0.5px solid #eee;
+    display: none;
+    position: relative;
+    z-index: 10;
+  }
+  .faq-bar.visible {
+    display: block;
+    padding: 6px 0 6px;
+  }
+  .faq-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0;
+  }
+  .faq-chips-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 0 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .faq-chips-row::-webkit-scrollbar { display: none; }
+  .faq-hint-label {
+    font-size: 10px;
+    color: #aaa;
+    padding: 0 12px 3px;
+    display: block;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .qq {
+    font-size: 12px;
+    padding: 5px 11px;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    background: #fafafa;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.1s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .qq:hover { border-color: #2456c8; color: #2456c8; background: #f0f4ff; }
+  .qq.answer-mode {
+    border-color: #c0d0f5;
+    background: #f0f4ff;
+    color: #2456c8;
+  }
+  .qq.answer-mode:hover { background: #dce8ff; border-color: #2456c8; }
+  .qq.ask-mode {
+    border-color: #e0e0e0;
+    background: #fafafa;
+    color: #444;
+  }
+  .qq.ask-mode:hover { border-color: #2456c8; color: #2456c8; background: #f0f4ff; }
+
+  /* welcome-card styles merged into .welcome-banner above */
+
+  /* input bar */
+  .input-bar {
+    background: #fff;
+    border-top: 0.5px solid #eee;
+    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .chat-input {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #111;
+    outline: none;
+    background: #fafafa;
+    font-family: inherit;
+  }
+  .chat-input:focus { border-color: #2456c8; background: #fff; }
+  .send-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #2456c8;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.12s;
+  }
+  .send-btn:hover { background: #1a3fa0; }
+  .send-btn svg { width: 15px; height: 15px; fill: #fff; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ── STAGE 1: TikTok Feed ── -->
+  <div id="stage-feed" style="flex:1;display:flex;flex-direction:column;position:relative;background:linear-gradient(175deg,#1c2a3a 0%,#0d1420 100%);">
+
+    <!-- status bar -->
+    <div class="status-bar">
+      <span>9:51</span>
+      <div class="status-icons">
+        <span>●</span>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="white" opacity="0.9"><path d="M8 2.4C5.3 2.4 2.9 3.5 1.2 5.3L0 4C2.1 1.5 5 0 8 0s5.9 1.5 8 4l-1.2 1.3C13.1 3.5 10.7 2.4 8 2.4z"/><path d="M8 5.6c-1.7 0-3.2.7-4.3 1.8L2.5 6.1C3.9 4.6 5.9 3.7 8 3.7s4.1.9 5.5 2.4l-1.2 1.3C11.2 6.3 9.7 5.6 8 5.6z"/><circle cx="8" cy="10" r="2"/></svg>
+        <svg width="26" height="12" viewBox="0 0 26 12" fill="white" opacity="0.9"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" stroke-width="1" fill="none"/><rect x="22" y="4" width="2" height="4" rx="1" fill="white"/><rect x="1" y="2" width="16" height="8" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+
+    <!-- nav tabs -->
+    <div class="feed-nav">
+      <span>关注</span>
+      <span class="active">推荐</span>
+    </div>
+
+    <!-- video area -->
+    <div class="video-area" style="flex:1;position:relative;overflow:hidden;">
+      <div class="video-bg"></div>
+
+      <!-- car SVG silhouette -->
+      <svg style="position:absolute;bottom:130px;left:50%;transform:translateX(-50%);width:270px;opacity:0.7;" viewBox="0 0 270 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 80 L50 80 L65 45 Q90 25 135 22 Q180 20 205 45 L220 80 L240 80 L245 95 L25 95 Z" fill="#4a7ab5" stroke="#6a9ad5" stroke-width="1"/>
+        <path d="M70 78 L80 48 Q100 32 135 30 Q168 29 188 48 L200 78 Z" fill="#2a5080" stroke="#4a7ab5" stroke-width="0.5"/>
+        <ellipse cx="72" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>
+        <ellipse cx="72" cy="96" rx="9" ry="7" fill="#3a5a80" stroke="#5a8ab0" stroke-width="1"/>
+        <ellipse cx="198" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>
+        <ellipse cx="198" cy="96" rx="9" ry="7" fill="#3a5a80" stroke="#5a8ab0" stroke-width="1"/>
+        <rect x="25" y="82" width="220" height="8" rx="2" fill="#3a6090" opacity="0.6"/>
+        <polygon points="65,78 72,55 82,48 88,78" fill="#5a8ab5" opacity="0.8"/>
+        <polygon points="182,78 188,55 198,48 205,78" fill="#5a8ab5" opacity="0.8"/>
+        <rect x="28" y="68" width="12" height="6" rx="2" fill="#fff9c4" opacity="0.9"/>
+        <rect x="230" y="68" width="12" height="6" rx="2" fill="#ffaaaa" opacity="0.7"/>
+        <rect x="88" y="30" width="6" height="3" rx="1" fill="#87bcf5" opacity="0.6"/>
+      </svg>
+
+      <!-- glow under car -->
+      <div style="position:absolute;bottom:128px;left:50%;transform:translateX(-50%);width:200px;height:10px;background:rgba(74,122,181,0.25);filter:blur(8px);border-radius:50%;"></div>
+
+      <!-- right actions -->
+      <div class="action-bar">
+        <div class="action-item">
+          <div class="action-icon">♥</div>
+          <span class="action-label">2.3k</span>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">💬</div>
+          <span class="action-label">148</span>
+        </div>
+        <div class="action-item">
+          <div class="action-icon" style="font-size:15px;">↗</div>
+          <span class="action-label">分享</span>
+        </div>
+      </div>
+
+      <!-- creator info -->
+      <div class="creator-row">
+        <div class="creator-name">@BMW_Official</div>
+        <p class="video-desc">
+          <span class="ad-tag">广告</span>2025款 BMW X5 限时优惠，到店即享专属礼遇 🚗
+        </p>
+      </div>
+
+      <!-- message entry card -->
+      <div class="msg-entry">
+        <div class="entry-header">
+          <div class="entry-avatar">BM</div>
+          <div class="entry-title">和我们聊聊 <span class="entry-chevron">›</span></div>
+          <button class="entry-close" aria-label="关闭">×</button>
+        </div>
+        <div class="entry-sub">点击问题，开始聊天。</div>
+        <div class="entry-input-wrap" onclick="enterChat('Can I book an appointment?')">
+          <span class="entry-placeholder">Can I book an appointment?</span>
+          <button class="entry-send-btn" aria-label="发送">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STAGE 2: Chat ── -->
+  <div id="stage-chat" style="display:none;flex:1;flex-direction:column;">
+
+    <!-- status bar -->
+    <div class="chat-status-bar">
+      <span>9:51</span>
+      <div style="display:flex;gap:5px;align-items:center;font-size:11px;font-weight:500;">
+        <span>●●●</span>
+        <span>WiFi</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <!-- header -->
+    <div class="chat-header">
+      <button class="back-btn" onclick="backToFeed()" aria-label="返回">‹</button>
+      <div class="ch-avatar">BM</div>
+      <div class="ch-info">
+        <div class="ch-name">BMW 官方助手</div>
+        <div class="ch-status">● 在线服务中</div>
+      </div>
+      <button class="reset-btn" onclick="resetChat()">↺ 重置</button>
+    </div>
+
+    <!-- messages -->
+    <div class="chat-body" id="cb"></div>
+
+    <!-- hint bar: dual mode — answer chips when bot is waiting, ask chips after faqDone -->
+    <div class="faq-bar" id="faq-bar">
+      <div class="faq-chips" id="faq-chips"></div>
+    </div>
+
+    <!-- input bar -->
+    <div class="input-bar">
+      <input class="chat-input" id="user-input" placeholder="有问题随时问我..."
+        onkeydown="if(event.key==='Enter')sendUserMsg()"
+        onfocus="showFaqBar()"
+        onblur="hideFaqBarIfNotDone()" />
+      <button class="send-btn" onclick="sendUserMsg()" aria-label="发送">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var step = 0, savedStep = 0, answers = {};
+var faqMap = {
+  '油耗怎么样？': '', '有哪些颜色？': '', '支持贷款吗？': '', '试驾怎么预约？': ''
+};
+
+function $$(id){ return document.getElementById(id); }
+function cbody(){ return $$('cb'); }
+function scrollDown(){
+  setTimeout(function(){
+    var cb = cbody();
+    cb.scrollTop = cb.scrollHeight;
+  }, 80);
+  setTimeout(function(){
+    var cb = cbody();
+    cb.scrollTop = cb.scrollHeight;
+  }, 300);
+}
+
+function addEl(el){ cbody().appendChild(el); scrollDown(); }
+
+function agentBubble(html){
+  var m = document.createElement('div'); m.className = 'msg agent';
+  var b = document.createElement('div'); b.className = 'bubble'; b.innerHTML = html;
+  m.appendChild(b); return m;
+}
+function userBubble(text){
+  var m = document.createElement('div'); m.className = 'msg user';
+  var b = document.createElement('div'); b.className = 'bubble'; b.textContent = text;
+  m.appendChild(b); return m;
+}
+function showTyping(){
+  var t = document.createElement('div'); t.className = 'typing-bubble'; t.id = 'typing';
+  for(var i=0;i<3;i++){ var d=document.createElement('div'); d.className='dot'; t.appendChild(d); }
+  addEl(t);
+}
+function removeTyping(){ var t=$$('typing'); if(t) t.remove(); }
+
+function progressBar(cur, total){
+  var p = document.createElement('div'); p.className = 'progress';
+  for(var i=0;i<total;i++){
+    (function(idx){
+      var d=document.createElement('div');
+      d.className='pd'+(idx<cur?' done':idx===cur?' cur':'');
+      // clickable: done steps jump back, future steps silently skip forward
+      d.style.cursor='pointer';
+      d.title = idx < cur ? '点击返回此步' : '';
+      d.onclick=function(){
+        if(idx < cur){
+          // jump back to that step — find the form and trigger edit
+          var formId='form-step'+(idx+1);
+          var targetForm=$$(formId);
+          if(targetForm){
+            var eb=targetForm.querySelector('.edit-btn');
+            if(eb) eb.click();
+            setTimeout(function(){ targetForm.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
+          }
+        } else if(idx > cur){
+          // silently skip forward — mark current step as skipped and advance
+          var formId='form-step'+cur;
+          var targetForm=$$(formId);
+          if(targetForm && !targetForm.classList.contains('locked')){
+            var key=targetForm.dataset.key;
+            if(key && !answers[key]) answers[key]='（已跳过）';
+            targetForm.classList.add('locked');
+            // visually grey out unselected chips
+            targetForm.querySelectorAll('.chip:not(.sel)').forEach(function(c){
+              c.classList.add('disabled'); c.style.cursor='default';
+            });
+            if(cur===1) setTimeout(showStep2, 200);
+            else if(cur===2) setTimeout(showStep3, 200);
+          }
+        }
+      };
+      p.appendChild(d);
+    })(i);
+  }
+  return p;
+}
+
+function chipForm(q, opts, key, nextFn, formId, skippable){
+  var f=document.createElement('div'); f.className='inline-form'; f.id=formId||'';
+
+  var hdr=document.createElement('div'); hdr.className='form-header';
+  var ql=document.createElement('div'); ql.className='form-q-text'; ql.textContent=q;
+  var eb=document.createElement('button'); eb.className='edit-btn'; eb.textContent='修改';
+  hdr.appendChild(ql); hdr.appendChild(eb);
+
+  var cg=document.createElement('div'); cg.className='chip-group';
+  var freeInputRow=null;
+
+  function lockForm(){
+    f.classList.add('locked');
+    cg.querySelectorAll('.chip').forEach(function(x){
+      x.classList.add('disabled'); x.style.cursor='default';
+    });
+    if(freeInputRow) freeInputRow.style.display='none';
+  }
+  function unlockForm(){
+    f.classList.remove('locked');
+    cg.querySelectorAll('.chip').forEach(function(x){
+      x.classList.remove('disabled'); x.style.cursor='pointer';
+    });
+  }
+
+  function doSelect(val, wasEdit){
+    // clear all, then re-mark the selected one after lock
+    answers[key]=val;
+    f.classList.remove('editing');
+    lockForm();
+    // re-apply sel on the chosen chip (lockForm only adds disabled, doesn't remove sel)
+    cg.querySelectorAll('.chip').forEach(function(x){
+      if(x.textContent.trim()===val) x.classList.add('sel');
+      else x.classList.remove('sel');
+    });
+    if(wasEdit){ resumeFromStep(parseInt(f.dataset.step||'1')); }
+    else { setTimeout(function(){ nextFn(); }, 220); }
+  }
+
+  opts.forEach(function(o){
+    var c=document.createElement('div'); c.className='chip'; c.textContent=o;
+    c.onclick=function(){
+      if(c.classList.contains('disabled')) return;
+      var wasEdit=f.classList.contains('editing');
+      c.classList.add('sel');
+      if(o==='其他'){
+        // show free input
+        if(!freeInputRow){
+          freeInputRow=document.createElement('div'); freeInputRow.className='free-input-row';
+          var fi=document.createElement('input'); fi.className='free-input'; fi.placeholder='请描述一下…'; fi.id='free-'+key;
+          var fc=document.createElement('button'); fc.className='free-confirm'; fc.textContent='确认';
+          fc.onclick=function(){
+            var val=fi.value.trim()||'其他';
+            doSelect(val, wasEdit);
+          };
+          freeInputRow.appendChild(fi); freeInputRow.appendChild(fc);
+          f.appendChild(freeInputRow);
+          setTimeout(function(){ fi.focus(); }, 50);
+        } else {
+          freeInputRow.style.display='flex';
+        }
+      } else {
+        if(freeInputRow) freeInputRow.style.display='none';
+        doSelect(o, wasEdit);
+      }
+    };
+    cg.appendChild(c);
+  });
+
+  // "其他" chip
+  var otherChip=document.createElement('div'); otherChip.className='chip other-chip'; otherChip.textContent='其他';
+  otherChip.onclick=function(){
+    if(otherChip.classList.contains('disabled')) return;
+    var wasEdit=f.classList.contains('editing');
+    cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+    otherChip.classList.add('sel');
+    if(!freeInputRow){
+      freeInputRow=document.createElement('div'); freeInputRow.className='free-input-row';
+      var fi=document.createElement('input'); fi.className='free-input'; fi.placeholder='请描述一下…'; fi.id='free-'+key;
+      var fc=document.createElement('button'); fc.className='free-confirm'; fc.textContent='确认';
+      fc.onclick=function(){
+        var val=fi.value.trim()||'其他';
+        doSelect(val, wasEdit);
+      };
+      freeInputRow.appendChild(fi); freeInputRow.appendChild(fc);
+      f.appendChild(freeInputRow);
+      setTimeout(function(){ fi.focus(); }, 50);
+    } else { freeInputRow.style.display='flex'; }
+  };
+  cg.appendChild(otherChip);
+
+  // direct contact shortcut — only shown before lead is captured
+  if(!leadCaptured && parseInt(f.dataset.step||'1') > 1){
+    var directBtn=document.createElement('button'); directBtn.className='skip-btn';
+    directBtn.style.cssText='color:#2456c8;font-size:11px;margin-top:8px;text-decoration:none;display:flex;align-items:center;gap:3px;background:none;border:none;padding:0;cursor:pointer;';
+    directBtn.innerHTML='<span style="font-size:13px">⚡</span> 直接与顾问讨论';
+    directBtn.onclick=function(){ lockForm(); quickLead(); };
+    f.appendChild(hdr); f.appendChild(cg); f.appendChild(directBtn);
+  } else {
+    f.appendChild(hdr); f.appendChild(cg);
+  }
+
+  eb.onclick=function(){
+    f.classList.add('editing');
+    unlockForm();
+    cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+    if(answers[key]){
+      cg.querySelectorAll('.chip').forEach(function(x){
+        if(x.textContent===answers[key]) x.classList.add('sel');
+      });
+    }
+  };
+
+  return f;
+}
+
+// Resume from the furthest step already reached, without re-rendering completed steps
+function resumeFromStep(editedStep){
+  var maxStep = step;
+
+  // Restore sel state on the edited form (answer is already in answers[key])
+  var editedForm = $$('form-step' + editedStep);
+  if(editedForm){
+    var key = editedForm.dataset.key;
+    var val = answers[key];
+    if(val){
+      editedForm.querySelectorAll('.chip').forEach(function(c){
+        if(c.textContent.trim() === val) c.classList.add('sel');
+        else c.classList.remove('sel');
+      });
+    }
+  }
+
+  // For each subsequent step already in DOM, just restore their sel state — don't re-render
+  for(var s = editedStep + 1; s <= maxStep; s++){
+    var form = $$('form-step' + s);
+    if(form){
+      var k = form.dataset.key;
+      var v = answers[k];
+      if(v){
+        form.querySelectorAll('.chip').forEach(function(c){
+          if(c.textContent.trim() === v){ c.classList.add('sel'); c.classList.add('disabled'); }
+          else { c.classList.remove('sel'); c.classList.add('disabled'); }
+          c.style.cursor = 'default';
+        });
+        form.classList.add('locked');
+      }
+    } else if(s === 4){
+      // result card not in DOM yet — render it
+      setTimeout(function(){ showResult(); }, 300);
+    }
+  }
+
+  scrollDown();
+}
+
+function enterChat(firstMsg){
+  $$('stage-feed').style.display='none';
+  var sc=$$('stage-chat'); sc.style.display='flex';
+  cbody().innerHTML='';
+  step=0; answers={};
+  faqDone=false; leadCaptured=false; faqAskedCount=0; textQuestionCallback=null;
+  miniCardEmitted=false;
+  var bar=$$('faq-bar'); if(bar){ bar.classList.remove('visible'); }
+
+
+  // user's first message from feed
+  addEl(userBubble(firstMsg));
+
+  // welcome banner — image + info + shortcut only, NO embedded question
+  buildFormCard();
+}
+
+/* ── Single form card — all questions inside, progress bar switches between them ── */
+var formCard = null;
+var formSteps = [
+  { key:'car',      q:'您目前有在开车吗？',       opts:['在开燃油车','在开新能源','暂时没有'], type:'chip' },
+  { key:'budget',   q:'您的购车预算区间？',        opts:['50万以下','50–70万','70万以上','还在考虑中'], type:'chip' },
+  { key:'interest', q:'您对哪方面最感兴趣？',      opts:[], type:'text' },
+  { key:'contact',  q:'最后留下联系方式',          opts:[], type:'contact' }
+];
+var currentFormStep = 0;
+
+function buildFormCard(){
+  var carSvg='<svg viewBox="0 0 270 120" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+    '<path d="M30 80 L50 80 L65 45 Q90 25 135 22 Q180 20 205 45 L220 80 L240 80 L245 95 L25 95 Z" fill="#4a7ab5" stroke="#6a9ad5" stroke-width="1"/>'+
+    '<path d="M70 78 L80 48 Q100 32 135 30 Q168 29 188 48 L200 78 Z" fill="#2a5080"/>'+
+    '<ellipse cx="72" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>'+
+    '<ellipse cx="72" cy="96" rx="9" ry="7" fill="#3a6090"/>'+
+    '<ellipse cx="198" cy="96" rx="18" ry="14" fill="#1a2535" stroke="#4a7ab5" stroke-width="1.5"/>'+
+    '<ellipse cx="198" cy="96" rx="9" ry="7" fill="#3a6090"/>'+
+    '<rect x="28" y="68" width="12" height="6" rx="2" fill="#fff9c4" opacity="0.9"/>'+
+    '<rect x="230" y="68" width="12" height="6" rx="2" fill="#ffaaaa" opacity="0.7"/>'+
+  '</svg>';
+
+  formCard = document.createElement('div');
+  formCard.className = 'welcome-card';
+  formCard.id = 'form-card';
+
+  // image
+  formCard.innerHTML =
+    '<div class="wc-image"><div class="wc-ad-tag">广告</div>'+carSvg+'<div class="wc-model-tag">BMW X5 2025</div></div>'+
+    '<div class="wc-body"><div class="wc-title">2025款 BMW X5 限时优惠</div>'+
+    '<div class="wc-desc">Dream Days 进行中 · 到店即享专属礼遇<br>顾问 24 小时内回电 · 免费预约试驾</div></div>';
+
+  // progress bar row (clickable dots)
+  var pbRow = document.createElement('div');
+  pbRow.id = 'fc-pb'; pbRow.className = 'fc-pb';
+  formCard.appendChild(pbRow);
+
+  // question area
+  var qa = document.createElement('div');
+  qa.id = 'fc-qa'; qa.className = 'wc-q-section';
+  formCard.appendChild(qa);
+
+  // shortcut
+  var sc = document.createElement('div'); sc.className = 'wc-shortcuts';
+  sc.innerHTML = '<div class="wc-shortcut" onclick="quickLead()">直接与顾问讨论 <span class="wc-shortcut-arrow">›</span></div>';
+  formCard.appendChild(sc);
+
+  addEl(formCard);
+  currentFormStep = 0;
+  step = 1;
+  renderFormStep(0);
+}
+
+function renderFormStep(idx){
+  currentFormStep = idx;
+  var s = formSteps[idx];
+
+  // Clear any stale text callback and hint mode from previous steps
+  textQuestionCallback = null;
+  clearHintAnswerMode();
+  if($$('user-input')) $$('user-input').placeholder = '有问题随时问我...';
+
+  // update progress bar
+  var pbRow = $$('fc-pb');
+  pbRow.innerHTML = '';
+  formSteps.forEach(function(_, i){
+    var dot = document.createElement('div');
+    dot.className = 'fc-dot' + (i < idx ? ' done' : i === idx ? ' cur' : '');
+
+    // All dots always clickable — current dot is a no-op
+    if(i !== idx){
+      dot.style.cursor = 'pointer';
+      dot.title = i < idx ? '返回第' + (i+1) + '题' : '跳到第' + (i+1) + '题';
+      (function(targetIdx){ dot.onclick = function(){ renderFormStep(targetIdx); }; })(i);
+    } else {
+      dot.style.cursor = 'default';
+      dot.title = '当前题目';
+    }
+
+    pbRow.appendChild(dot);
+  });
+
+  // update question area
+  var qa = $$('fc-qa');
+  qa.innerHTML = '';
+
+  var qLabel = document.createElement('div');
+  qLabel.className = 'wc-q-greet';
+  qLabel.textContent = s.q;
+  qa.appendChild(qLabel);
+
+  if(s.type === 'chip'){
+    var cg = document.createElement('div'); cg.className = 'chip-group'; cg.style.marginTop='8px';
+    s.opts.forEach(function(o){
+      var c = document.createElement('div'); c.className = 'chip';
+      if(answers[s.key] === o) c.classList.add('sel');
+      c.textContent = o;
+      c.onclick = function(){
+        if(c.classList.contains('disabled')) return;
+        cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+        c.classList.add('sel');
+        answers[s.key] = o;
+        setTimeout(function(){
+          if(idx + 1 < formSteps.length){ renderFormStep(idx + 1); }
+          else { onFormComplete(); }
+        }, 250);
+      };
+      cg.appendChild(c);
+    });
+    // "其他" chip
+    var oc = document.createElement('div'); oc.className = 'chip other-chip'; oc.textContent = '其他';
+    oc.onclick = function(){
+      cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+      oc.classList.add('sel');
+      var fri = document.createElement('div'); fri.className = 'free-input-row'; fri.style.marginTop='8px';
+      var fi = document.createElement('input'); fi.className = 'free-input'; fi.placeholder = '请描述一下…';
+      var fc = document.createElement('button'); fc.className = 'free-confirm'; fc.textContent = '确认';
+      fc.onclick = function(){
+        answers[s.key] = fi.value.trim() || '其他';
+        setTimeout(function(){ renderFormStep(idx + 1); }, 200);
+      };
+      fri.appendChild(fi); fri.appendChild(fc); qa.appendChild(fri);
+      setTimeout(function(){ fi.focus(); }, 50);
+    };
+    cg.appendChild(oc);
+    qa.appendChild(cg);
+
+  } else if(s.type === 'text'){
+    var hint = document.createElement('div');
+    hint.style.cssText = 'font-size:11px;color:#aaa;margin:6px 0 8px;';
+    hint.textContent = '比如驾驶体验、空间舒适性、智能配置…';
+    qa.appendChild(hint);
+    var fri = document.createElement('div'); fri.className = 'free-input-row';
+    var fi = document.createElement('input'); fi.className = 'free-input'; fi.placeholder = '随便说说就好';
+    if(answers[s.key]) fi.value = answers[s.key];
+    var fc = document.createElement('button'); fc.className = 'free-confirm'; fc.textContent = '下一步';
+    fc.onclick = function(){
+      answers[s.key] = fi.value.trim() || '（未填）';
+      renderFormStep(idx + 1);
+    };
+    var skipTxt = document.createElement('button'); skipTxt.className = 'skip-btn';
+    skipTxt.style.cssText = 'color:#aaa;font-size:11px;margin-top:6px;background:none;border:none;padding:0;cursor:pointer;';
+    skipTxt.textContent = '跳过';
+    skipTxt.onclick = function(){ answers[s.key]='（已跳过）'; renderFormStep(idx+1); };
+    fri.appendChild(fi); fri.appendChild(fc);
+    qa.appendChild(fri); qa.appendChild(skipTxt);
+
+    // show hint suggestions when card's own text input gets focus
+    var textSuggestions = ['驾驶体验', '空间舒适性', '智能配置', '外观设计'];
+    fi.onfocus = function(){
+      setHintAnswerMode(textSuggestions, function(val){
+        // hint chip selected: fill card input and auto-confirm
+        fi.value = val;
+        fc.click();
+      });
+    };
+    fi.onblur = function(){
+      setTimeout(function(){ clearHintAnswerMode(); }, 200);
+    };
+
+  } else if(s.type === 'contact'){
+    // contact fields inline in card
+    var l1=document.createElement('div'); l1.style.cssText='font-size:12px;font-weight:600;color:#111;margin:8px 0 4px;'; l1.textContent='姓名';
+    var ni=document.createElement('input'); ni.id='fc-ni';
+    ni.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:8px 10px;font-size:13px;outline:none;background:#fafafa;box-sizing:border-box;margin-bottom:8px;';
+    ni.placeholder='您的姓名';
+
+    var l2=document.createElement('div'); l2.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l2.textContent='手机号码';
+    var pi=document.createElement('input'); pi.id='fc-pi';
+    pi.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:8px 10px;font-size:13px;outline:none;background:#fafafa;box-sizing:border-box;margin-bottom:8px;';
+    pi.placeholder='请输入手机号'; pi.value='138 0000 0000';
+
+    var priv=document.createElement('div');
+    priv.style.cssText='font-size:11px;color:#bbb;margin-bottom:10px;line-height:1.5;';
+    priv.textContent='您的信息将被安全处理，仅用于与顾问联系。';
+
+    var sb=document.createElement('button'); sb.textContent='提交';
+    sb.style.cssText='width:100%;padding:11px;background:#2456c8;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;';
+    sb.onclick=function(){
+      var n=$$('fc-ni').value||'您'; var p=$$('fc-pi').value;
+      if(!p){ return; }
+      leadCaptured=true;
+      addEl(userBubble(n+' / '+p));
+      // hide shortcut row in card
+      var sc=formCard.querySelector('.wc-shortcuts'); if(sc) sc.style.display='none';
+      showResult(false);
+    };
+
+    qa.appendChild(l1); qa.appendChild(ni);
+    qa.appendChild(l2); qa.appendChild(pi);
+    qa.appendChild(priv); qa.appendChild(sb);
+  }
+
+  // scroll twice: once immediately, once after browser repaints new card height
+  scrollDown();
+  setTimeout(function(){ var cb=cbody(); cb.scrollTop=cb.scrollHeight; }, 150);
+}
+
+function onFormComplete(){
+  renderFormStep(formSteps.length - 1); // go to contact step
+}
+
+function showStep1(){
+  addEl(progressBar(0,4));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var f=chipForm('您目前有在开车吗？',['在开燃油车','在开新能源','暂时没有'],'car',showStep2,'form-step1');
+    f.dataset.step='1'; f.dataset.key='car'; addEl(f); step=1;
+  }, 650);
+}
+
+function showStep2(){
+  addEl(progressBar(1,4));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var f=chipForm('您的购车预算区间？',['50万以下','50–70万','70万以上','还在考虑中'],'budget',showStep2b,'form-step2',true);
+    f.dataset.step='2'; f.dataset.key='budget'; addEl(f); step=2;
+  }, 550);
+}
+
+function showStep2b(){
+  addEl(progressBar(2,4));
+  askTextQuestion(
+    '还有一个小问题：您对哪方面最感兴趣？比如驾驶体验、空间舒适性、智能配置…随便说说就好 😊',
+    'interest',
+    showStep3
+  );
+}
+
+// Free-text question mode — agent asks via bubble, user answers via input bar
+var textQuestionCallback = null;
+
+function askTextQuestion(questionText, key, nextFn){
+  addEl(agentBubble(questionText));
+  textQuestionCallback = function(val){
+    answers[key] = val;
+    textQuestionCallback = null;
+    addEl(userBubble(val));
+    setTimeout(nextFn, 300);
+  };
+  // hint in input bar
+  var inp = $$('user-input');
+  if(inp){ inp.placeholder = '在这里输入您的回答…'; inp.focus(); }
+}
+
+function showStep3(){
+  addEl(progressBar(3,4));
+
+  var f=document.createElement('div'); f.className='contact-form'; f.id='form-step3';
+  f.style.cssText='background:#fff;border:0.5px solid #e5e5e5;border-radius:16px;padding:14px 14px 12px;align-self:flex-start;width:86%;box-sizing:border-box;';
+
+  // header inside card
+  var cardHeader=document.createElement('div');
+  cardHeader.style.cssText='margin-bottom:12px;';
+  cardHeader.innerHTML='<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:3px;">最后一步，留下联系方式</div><div style="font-size:11px;color:#aaa;">手机号仅用于顾问回电，不会用于其他用途</div>';
+  f.appendChild(cardHeader);
+
+  var l1=document.createElement('div'); l1.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:5px;'; l1.textContent='姓名';
+  var ni=document.createElement('input'); ni.id='ni';
+  ni.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  ni.placeholder='您的姓名';
+
+  var l2=document.createElement('div'); l2.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:5px;'; l2.textContent='手机号码';
+  var pi=document.createElement('input'); pi.id='pi';
+  pi.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  pi.placeholder='请输入手机号'; pi.value='138 0000 0000';
+
+  var priv=document.createElement('div');
+  priv.style.cssText='font-size:11px;color:#bbb;margin-bottom:10px;line-height:1.5;';
+  priv.textContent='您的信息将被安全处理，仅用于与顾问联系，不会用于其他用途。';
+
+  var sb=document.createElement('button'); sb.textContent='提交';
+  sb.style.cssText='width:100%;padding:11px;background:#2456c8;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;';
+  sb.onclick=function(){
+    var n=$$('ni').value||'您'; var p=$$('pi').value;
+    if(!p){ addEl(agentBubble('请填写手机号，方便顾问与您联系 😊')); return; }
+    leadCaptured=true; addEl(userBubble(n+' / '+p)); showResult();
+  };
+
+  f.appendChild(l1); f.appendChild(ni);
+  f.appendChild(l2); f.appendChild(pi);
+  f.appendChild(priv); f.appendChild(sb);
+  addEl(f); step=3;
+}
+
+// chooseDM removed
+
+function showResult(skipMode){
+  addEl(progressBar(3,4));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+
+    // single confirm bubble
+    addEl(agentBubble('信息已收到 ✅ 顾问将在 <strong>24 小时内</strong>致电联系您 📞'));
+
+    // match card + CTA merged into one card
+    setTimeout(function(){
+      var hasQual = (!answers['car'] || answers['car']==='（已跳过）') ||
+                    (!answers['budget'] || answers['budget']==='（已跳过）');
+
+      var rc=document.createElement('div'); rc.className='result-card';
+      var chips =
+        '<div class="chip" style="background:#2456c8;color:#fff;border-color:#2456c8" onclick="startBooking()">📍 预约试驾</div>';
+      if(hasQual){
+        chips += '<div class="chip" onclick="showQualificationFollowUp()">获取更精准的方案推荐</div>';
+      }
+      rc.innerHTML=
+        '<div class="rc-title">您的专属方案</div>'+
+        '<div class="rc-row"><span class="rk">推荐车型</span><span class="rv">BMW X5 xDrive40i</span></div>'+
+        '<div class="rc-row"><span class="rk">参考落地价</span><span class="rv">约 64.8 万</span></div>'+
+        '<div style="margin-top:10px"><div style="font-size:12px;color:#888;margin-bottom:6px">接下来？</div>'+
+        '<div class="chip-group">'+chips+'</div></div>';
+      addEl(rc);
+      step=4;
+      // Only expand hint bar now if all qualify questions are already answered
+      // Otherwise wait for showQualificationFollowUp to call expandFaqBar at its end
+      if(!hasQual){
+        expandFaqBar();
+      }
+    }, 400);
+
+  }, 950);
+}
+
+function startBooking(){
+  addEl(userBubble('预约试驾'));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    addEl(agentBubble('已获取您的位置 📍 以下是距您最近的门店及可预约时段'));
+
+    var stores=[
+      {name:'中关村宝马体验中心', dist:'1.2km', slots:['今天 15:00','明天 10:00','明天 14:00']},
+      {name:'朝阳区宝马授权店',   dist:'3.5km', slots:['明天 11:00','明天 16:00','后天 10:00']},
+      {name:'顺义宝马4S店',       dist:'8.1km', slots:['明天 09:30','后天 14:00','后天 16:00']},
+    ];
+
+    stores.forEach(function(s){
+      var card=document.createElement('div');
+      card.style.cssText='background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:11px 12px;margin-bottom:8px;';
+
+      var headerRow=document.createElement('div');
+      headerRow.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
+      headerRow.innerHTML=
+        '<div style="font-size:13px;font-weight:600;color:#111;">'+s.name+'</div>'+
+        '<div style="font-size:11px;color:#aaa;">📍 '+s.dist+'</div>';
+
+      var slotRow=document.createElement('div');
+      slotRow.style.cssText='display:flex;flex-wrap:wrap;gap:5px;';
+
+      s.slots.forEach(function(t){
+        var sc=document.createElement('div'); sc.className='chip';
+        sc.style.cssText='font-size:11px;padding:4px 9px;';
+        sc.textContent=t;
+        sc.onclick=function(){
+          if(sc.classList.contains('disabled')) return;
+          // lock all slot chips across all store cards
+          document.querySelectorAll('.slot-chip').forEach(function(x){
+            x.classList.add('disabled'); x.style.cursor='default';
+          });
+          sc.classList.add('sel');
+          addEl(userBubble(s.name+' · '+t));
+          setTimeout(function(){ showBookingConfirm(s.name, t); }, 300);
+        };
+        sc.classList.add('slot-chip');
+        slotRow.appendChild(sc);
+      });
+
+      card.appendChild(headerRow);
+      card.appendChild(slotRow);
+      addEl(card);
+    });
+
+  }, 800);
+}
+
+// showTimePicker removed — slots shown inline with store cards
+
+function showBookingConfirm(store, time){
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var bc=document.createElement('div'); bc.className='result-card';
+    bc.innerHTML=
+      '<div class="rc-title" style="color:#1aac6e">✅ 预约成功</div>'+
+      '<div class="rc-row"><span class="rk">门店</span><span class="rv">'+store+'</span></div>'+
+      '<div class="rc-row"><span class="rk">时间</span><span class="rv">'+time+'</span></div>'+
+      '<div class="rc-row"><span class="rk">车型</span><span class="rv">BMW X5 xDrive40i</span></div>'+
+      '<div class="rc-row"><span class="rk">顾问</span><span class="rv">张经理 将接待您</span></div>'+
+      '<div style="font-size:11px;color:#aaa;margin-top:8px;line-height:1.6">确认短信将发送至您的手机，如需更改请联系顾问</div>';
+    addEl(bc);
+    addEl(agentBubble('期待您的到来 🚗 有任何问题随时问我 😊'));
+  }, 800);
+}
+
+function makeFaqBubble(ans){
+  var fa=document.createElement('div'); fa.className='faq-bubble';
+  var p=document.createElement('p'); p.textContent=ans; fa.appendChild(p);
+  return fa;
+}
+
+// Returns true if formCard bottom is visible or just barely above current view
+function isFormCardNearby(){
+  if(!formCard) return false;
+  var cb = cbody();
+  var cbRect = cb.getBoundingClientRect();
+  var cardRect = formCard.getBoundingClientRect();
+  // Card bottom must be within the visible chat-body area
+  // i.e. cardRect.bottom is above cbRect.top (not scrolled past) AND
+  // the distance from card bottom to chat-body bottom is small (card still roughly in view)
+  var cardVisible = cardRect.bottom > cbRect.top && cardRect.top < cbRect.bottom;
+  var distanceFromBottom = cbRect.bottom - cardRect.bottom;
+  return cardVisible || distanceFromBottom < 80; // within ~1 message height
+}
+
+// Count how many sibling elements are between formCard and the last child of chat-body
+function messagesSinceFormCard(){
+  if(!formCard) return 999;
+  var cb = cbody();
+  var children = Array.prototype.slice.call(cb.children);
+  var cardIdx = children.indexOf(formCard);
+  if(cardIdx === -1) return 999;
+  return children.length - 1 - cardIdx;
+}
+
+// Tracks whether a mini resume card has already been emitted this session
+var miniCardEmitted = false;
+
+function scrollToFormCard(){
+  // Just scroll and highlight — don't call renderFormStep (would reset textQuestionCallback)
+  setTimeout(function(){
+    if(!formCard) return;
+    formCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    formCard.style.transition = 'box-shadow 0.3s';
+    formCard.style.boxShadow = '0 0 0 2px #2456c8';
+    setTimeout(function(){ formCard.style.boxShadow = ''; }, 1200);
+  }, 150);
+}
+
+// Called AFTER bubble is in DOM so distance measurements are accurate
+function applyResumeAction(bubble){
+  if(!formCard || !$$('fc-qa') || leadCaptured) return;
+
+  // Count messages added since the form card (each Q&A = 2 children: user bubble + reply bubble)
+  var msgCount = messagesSinceFormCard();
+  var nearby = msgCount <= 4; // 2 Q&A rounds = 4 messages
+
+  if(nearby){
+    // Case 1: scroll back and highlight, no extra text
+    setTimeout(function(){ scrollToFormCard(); }, 400);
+
+  } else if(!miniCardEmitted){
+    // Case 2: first time far — emit mini card right away
+    miniCardEmitted = true;
+    setTimeout(function(){
+      var miniEl = buildMiniResumeCard();
+      if(miniEl) addEl(miniEl);
+    }, 300);
+
+  } else {
+    // Case 3: mini card already sent — show nudge + buttons in bubble
+    var nudge = document.createElement('div');
+    nudge.style.cssText = 'font-size:11px;color:#888;margin-top:8px;margin-bottom:6px;line-height:1.6;';
+    nudge.textContent = '为帮助我们了解您，给您更精准的答复，您可以：';
+    bubble.appendChild(nudge);
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap;';
+
+    var resumeBtn = document.createElement('div');
+    resumeBtn.className = 'resume-link';
+    resumeBtn.style.cssText = 'margin:0;font-size:11px;';
+    resumeBtn.textContent = '↩ 继续填写';
+    resumeBtn.onclick = function(){
+      nudge.style.display = 'none';
+      wrap.style.display = 'none';
+      var miniEl = buildMiniResumeCard();
+      if(miniEl) addEl(miniEl);
+    };
+    wrap.appendChild(resumeBtn);
+
+    var sep = document.createElement('span');
+    sep.style.cssText = 'color:#ddd;font-size:12px;';
+    sep.textContent = '|';
+    wrap.appendChild(sep);
+
+    var dl = document.createElement('div');
+    dl.className = 'resume-link';
+    dl.style.cssText = 'margin:0;color:#2456c8;font-size:11px;display:flex;align-items:center;gap:3px;';
+    dl.innerHTML = '<span style="font-size:12px">⚡</span> 直接与顾问讨论';
+    dl.onclick = function(){
+      wrap.style.display = 'none';
+      quickLeadInline();
+    };
+    wrap.appendChild(dl);
+    bubble.appendChild(wrap);
+  }
+}
+
+function askFaq(q){
+  savedStep=step;
+  addEl(userBubble(q));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var bubble = makeFaqBubble('bot根据知识库答复');
+    addEl(bubble);
+    applyResumeAction(bubble);
+  }, 750);
+}
+
+function sendUserMsg(){
+  var inp=$$('user-input'); var val=inp.value.trim(); if(!val) return;
+  inp.value='';
+  if(textQuestionCallback){
+    inp.placeholder='有问题随时问我...';
+    textQuestionCallback(val);
+    return;
+  }
+  savedStep=step;
+  addEl(userBubble(val));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var bubble = makeFaqBubble('bot根据知识库答复');
+    addEl(bubble);
+    applyResumeAction(bubble);
+  }, 800);
+}
+
+function buildMiniResumeCard(){
+  var miniCard = document.createElement('div');
+  miniCard.className = 'welcome-card';
+  miniCard.style.cssText = 'flex-shrink:0;';
+
+  var pbRow = document.createElement('div');
+  pbRow.className = 'fc-pb';
+  miniCard.appendChild(pbRow);
+
+  var qa = document.createElement('div');
+  qa.className = 'wc-q-section';
+  miniCard.appendChild(qa);
+
+  var scRow = document.createElement('div');
+  scRow.className = 'wc-shortcuts';
+  scRow.innerHTML = '<div class="wc-shortcut" onclick="quickLeadInline()">直接与顾问讨论 <span class="wc-shortcut-arrow">›</span></div>';
+  miniCard.appendChild(scRow);
+
+  var miniStartStep = currentFormStep;
+  if(miniStartStep >= formSteps.length - 1){
+    // Already at contact step — just scroll back to main card
+    renderFormStep(miniStartStep);
+    setTimeout(function(){
+      if(formCard) formCard.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }, 100);
+    return null; // caller checks for null before addEl
+  }
+
+  function renderMiniStep(idx){
+    pbRow.innerHTML = '';
+    formSteps.forEach(function(_, i){
+      var dot = document.createElement('div');
+      dot.className = 'fc-dot' + (i < idx ? ' done' : i === idx ? ' cur' : '');
+      if(i !== idx){
+        dot.style.cursor = 'pointer';
+        dot.title = i < idx ? '返回第'+(i+1)+'题' : '跳到第'+(i+1)+'题';
+        (function(ti){ dot.onclick = function(){ renderMiniStep(ti); }; })(i);
+      }
+      pbRow.appendChild(dot);
+    });
+
+    qa.innerHTML = '';
+    var s = formSteps[idx];
+    scRow.style.display = (idx >= formSteps.length - 1) ? 'none' : '';
+
+    if(idx >= formSteps.length - 1){
+      renderMiniContact();
+      return;
+    }
+
+    var qLabel = document.createElement('div');
+    qLabel.className = 'wc-q-greet';
+    qLabel.textContent = s.q;
+    qa.appendChild(qLabel);
+
+    function nextStep(){
+      currentFormStep = idx + 1;
+      renderFormStep(currentFormStep);
+      renderMiniStep(currentFormStep);
+      // If we've reached the end, mini card is no longer "blocking" — reset so
+      // future FAQ replies use scroll-back instead of another mini card
+      if(currentFormStep >= formSteps.length - 1){ miniCardEmitted = false; }
+      setTimeout(function(){ miniCard.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 80);
+    }
+
+    if(s.type === 'chip'){
+      var cg = document.createElement('div'); cg.className = 'chip-group'; cg.style.marginTop='8px';
+      s.opts.forEach(function(o){
+        var c = document.createElement('div'); c.className = 'chip';
+        if(answers[s.key] === o) c.classList.add('sel');
+        c.textContent = o;
+        c.onclick = function(){
+          if(c.classList.contains('disabled')) return;
+          cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+          c.classList.add('sel');
+          answers[s.key] = o;
+          setTimeout(nextStep, 220);
+        };
+        cg.appendChild(c);
+      });
+      qa.appendChild(cg);
+
+    } else if(s.type === 'text'){
+      var hint = document.createElement('div');
+      hint.style.cssText = 'font-size:11px;color:#aaa;margin:4px 0 8px;';
+      hint.textContent = '比如驾驶体验、空间舒适性、智能配置…';
+      qa.appendChild(hint);
+      var fri = document.createElement('div'); fri.className = 'free-input-row';
+      var fi = document.createElement('input'); fi.className = 'free-input'; fi.placeholder = '随便说说就好';
+      if(answers[s.key] && answers[s.key] !== '（已跳过）') fi.value = answers[s.key];
+      var fc = document.createElement('button'); fc.className = 'free-confirm'; fc.textContent = '下一步';
+      fc.onclick = function(){
+        answers[s.key] = fi.value.trim() || '（未填）';
+        nextStep();
+      };
+      var skipBtn = document.createElement('button');
+      skipBtn.className = 'skip-btn';
+      skipBtn.style.cssText = 'color:#aaa;font-size:11px;margin-top:6px;background:none;border:none;padding:0;cursor:pointer;';
+      skipBtn.textContent = '跳过';
+      skipBtn.onclick = function(){ answers[s.key]='（已跳过）'; nextStep(); };
+      fri.appendChild(fi); fri.appendChild(fc);
+      qa.appendChild(fri); qa.appendChild(skipBtn);
+      // hint chips write directly to card input — main input bar stays as free chat
+      setHintAnswerMode(['驾驶体验','空间舒适性','智能配置','外观设计'], function(val){ fi.value = val; fc.click(); });
+      fi.onfocus = function(){ setHintAnswerMode(['驾驶体验','空间舒适性','智能配置','外观设计'], function(val){ fi.value = val; fc.click(); }); };
+      fi.onblur = function(){ setTimeout(function(){ clearHintAnswerMode(); }, 200); };
+    }
+  }
+
+  function renderMiniContact(){
+    qa.innerHTML = '';
+    scRow.style.display = 'none';
+    var heading = document.createElement('div');
+    heading.style.cssText = 'font-size:13px;font-weight:700;color:#111;margin-bottom:3px;';
+    heading.textContent = '最后一步，留下联系方式';
+    qa.appendChild(heading);
+    var sub = document.createElement('div');
+    sub.style.cssText = 'font-size:11px;color:#aaa;margin-bottom:10px;';
+    sub.textContent = '手机号仅用于顾问回电，不会用于其他用途';
+    qa.appendChild(sub);
+    var l1 = document.createElement('div'); l1.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l1.textContent='姓名';
+    var ni = document.createElement('input'); ni.id='mc-ni';
+    ni.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:8px 10px;font-size:13px;outline:none;background:#fafafa;box-sizing:border-box;margin-bottom:8px;';
+    ni.placeholder='您的姓名';
+    var l2 = document.createElement('div'); l2.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l2.textContent='手机号码';
+    var pi = document.createElement('input'); pi.id='mc-pi';
+    pi.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:8px 10px;font-size:13px;outline:none;background:#fafafa;box-sizing:border-box;margin-bottom:8px;';
+    pi.placeholder='请输入手机号'; pi.value='138 0000 0000';
+    var priv = document.createElement('div');
+    priv.style.cssText='font-size:11px;color:#bbb;margin-bottom:10px;line-height:1.5;';
+    priv.textContent='您的信息将被安全处理，仅用于顾问联系。';
+    var sb = document.createElement('button'); sb.textContent='立即联系顾问';
+    sb.style.cssText='width:100%;padding:11px;background:#2456c8;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;';
+    sb.onclick = function(){
+      var n=$$('mc-ni').value||'您'; var p=$$('mc-pi').value;
+      if(!p) return;
+      leadCaptured=true;
+      addEl(userBubble(n+' / '+p));
+      qa.innerHTML='<div style="font-size:22px;margin-bottom:6px">✅</div>'+
+        '<div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px">信息已提交！</div>'+
+        '<div style="font-size:12px;color:#555;line-height:1.7">我们的专属顾问将在 <strong>2 小时内</strong>主动联系您。</div>';
+      scrollDown();
+      setTimeout(function(){
+        function unanswered(key){ return !answers[key] || answers[key]==='（已跳过）' || answers[key]==='（未填）'; }
+        var hasUnanswered = unanswered('car') || unanswered('budget') || unanswered('interest');
+        if(hasUnanswered){
+          addEl(agentBubble('顺便帮顾问多了解一些您的情况，这样联系时可以更有针对性 😊'));
+          setTimeout(function(){ runConvQualFlow(function(){ expandFaqBar(); }); }, 400);
+        } else {
+          expandFaqBar();
+        }
+      }, 800);
+    };
+    qa.appendChild(l1); qa.appendChild(ni);
+    qa.appendChild(l2); qa.appendChild(pi);
+    qa.appendChild(priv); qa.appendChild(sb);
+  }
+
+  renderMiniStep(miniStartStep);
+  return miniCard;
+}
+
+var faqDone = false; // true after form is fully completed
+var leadCaptured = false; // true after phone number submitted
+var faqAskedCount = 0; // track how many FAQs asked during form flow
+var faqQuestions = ['油耗怎么样？', '有哪些颜色？', '支持贷款吗？', '试驾怎么预约？'];
+
+/* ── Hint bar mode management ── */
+// answerMode: bot is waiting for a response → chips are suggested answers
+// freeMode: no pending question → chips open a popup of suggested questions
+
+var hintAnswerOpts = null;    // array of strings when in answer mode
+var hintAnswerOnSelect = null; // callback(val) when a hint chip is selected
+
+function renderHintBar(){
+  var chips = $$('faq-chips');
+  if(!chips) return;
+  chips.innerHTML = '';
+
+  if(hintAnswerOpts && hintAnswerOpts.length){
+    // ── Answer mode: 猜你想答 (text step only) ──
+    var label = document.createElement('span');
+    label.className = 'faq-hint-label';
+    label.textContent = '猜你想答';
+    chips.appendChild(label);
+
+    var row = document.createElement('div');
+    row.className = 'faq-chips-row';
+
+    hintAnswerOpts.forEach(function(opt){
+      var c = document.createElement('div');
+      c.className = 'qq answer-mode';
+      c.textContent = opt.label || opt;
+      c.onclick = function(){
+        var val = opt.value || opt.label || opt;
+        if(hintAnswerOnSelect){
+          hintAnswerOnSelect(val);
+        }
+        clearHintAnswerMode();
+      };
+      row.appendChild(c);
+    });
+    chips.appendChild(row);
+
+  } else if(faqDone){
+    // ── Ask mode: 猜你想问 — only after lead captured ──
+    var label2 = document.createElement('span');
+    label2.className = 'faq-hint-label';
+    label2.textContent = '猜你想问';
+    chips.appendChild(label2);
+
+    var row2 = document.createElement('div');
+    row2.className = 'faq-chips-row';
+
+    faqQuestions.forEach(function(q){
+      var c = document.createElement('div');
+      c.className = 'qq ask-mode';
+      c.textContent = q;
+      c.onclick = function(){ askFaqAndCollapse(q); };
+      row2.appendChild(c);
+    });
+    chips.appendChild(row2);
+  }
+}
+
+function setHintAnswerMode(opts, onSelect){
+  hintAnswerOpts = opts;
+  hintAnswerOnSelect = onSelect || null;
+  renderHintBar();
+  var bar = $$('faq-bar');
+  bar.classList.add('visible');
+  bar.style.display = 'block';
+}
+
+function clearHintAnswerMode(){
+  hintAnswerOpts = null;
+  hintAnswerOnSelect = null;
+  renderHintBar();
+  if(!faqDone){ $$('faq-bar').classList.remove('visible'); }
+}
+
+function isAtContactStep(){
+  return !leadCaptured && currentFormStep >= formSteps.length - 1;
+}
+
+function showFaqBar(){
+  // Only show on main input focus if faqDone (ask mode) or hint answer mode is active
+  if(faqDone || hintAnswerOpts){
+    renderHintBar();
+    $$('faq-bar').classList.add('visible');
+  }
+}
+
+function hideFaqBarIfNotDone(){
+  if(!faqDone){
+    setTimeout(function(){
+      // don't hide if we're in answer-hint mode (card text input has focus)
+      if(!hintAnswerOpts){
+        $$('faq-bar').classList.remove('visible');
+      }
+    }, 200);
+  }
+}
+
+function askFaqAndCollapse(q){
+  askFaq(q);
+  if(!faqDone){
+    $$('faq-bar').classList.remove('visible');
+  }
+}
+
+function expandFaqBar(){
+  if(!leadCaptured) return; // never show 猜你想问 before lead capture
+  faqDone = true;
+  hintAnswerOpts = null;
+  renderHintBar();
+  $$('faq-bar').classList.add('visible');
+  $$('faq-bar').style.display = 'block';
+}
+
+function showQualificationFollowUp(){
+  addEl(userBubble('获取更精准的方案推荐'));
+  addEl(agentBubble('好的！提前告诉顾问一些信息，可以帮他更好地准备与您的对话 😊'));
+  setTimeout(function(){
+    function unanswered(key){ return !answers[key] || answers[key]==='（已跳过）' || answers[key]==='（未填）'; }
+    // ask remaining unanswered qualification questions — conversational style only
+    var qualSteps=[];
+    if(unanswered('car')){
+      qualSteps.push(function(next){
+        addEl(agentBubble('您目前有在开车吗？'));
+        setTimeout(function(){
+          addEl(qualChipsConv(['在开燃油车','在开新能源','暂时没有'],'car',next));
+        }, 300);
+      });
+    }
+    if(unanswered('budget')){
+      qualSteps.push(function(next){
+        addEl(agentBubble('您的购车预算大概在哪个区间？'));
+        setTimeout(function(){
+          addEl(qualChipsConv(['50万以下','50–70万','70万以上','还在考虑中'],'budget',next));
+        }, 300);
+      });
+    }
+    if(unanswered('interest')){
+      qualSteps.push(function(next){
+        // text question — agent bubble + input bar takeover
+        addEl(agentBubble('您对 X5 哪方面最感兴趣呢？随便说说就好 😊'));
+        var inp = $$('user-input');
+        if(inp){ inp.placeholder = '在这里输入您的回答…'; inp.focus(); }
+        textQuestionCallback = function(val){
+          answers['interest'] = val;
+          textQuestionCallback = null;
+          clearHintAnswerMode();
+          addEl(userBubble(val));
+          var inp2 = $$('user-input');
+          if(inp2) inp2.placeholder = '有问题随时问我...';
+          setTimeout(next, 300);
+        };
+        setHintAnswerMode(['驾驶体验', '空间舒适性', '智能配置', '外观设计'], function(val){ if(textQuestionCallback) textQuestionCallback(val); });
+      });
+    }
+    if(qualSteps.length===0){
+      addEl(agentBubble('您的信息已经很完整了，顾问会根据您的情况充分准备 👍'));
+      expandFaqBar();
+      return;
+    }
+    function runStep(i){
+      if(i >= qualSteps.length){
+        setTimeout(function(){
+          addEl(agentBubble('很好！顾问现在对您的情况有了更全面的了解，联系时会更有针对性 👍'));
+          setTimeout(function(){ expandFaqBar(); }, 300);
+        }, 300);
+        return;
+      }
+      qualSteps[i](function(){ setTimeout(function(){ runStep(i+1); }, 400); });
+    }
+    runStep(0);
+  }, 600);
+}
+
+// Conversational chips — right-aligned, pill style, also accepts typed answer via input bar
+function qualChipsConv(opts, key, nextFn){
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'align-self:flex-end;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:90%;';
+
+  function doAnswer(val){
+    // disable all chips
+    wrap.querySelectorAll('.qc-chip').forEach(function(x){
+      x.style.opacity = '0.35';
+      x.style.cursor = 'default';
+      x.style.pointerEvents = 'none';
+      if(x.dataset.val === val){
+        x.style.opacity = '1';
+        x.style.background = '#2456c8';
+        x.style.color = '#fff';
+        x.style.borderColor = '#2456c8';
+        x.style.borderStyle = 'solid';
+      }
+    });
+    // clear typing callback and hint bar answer mode
+    textQuestionCallback = null;
+    clearHintAnswerMode();
+    var inp = $$('user-input');
+    if(inp) inp.placeholder = '有问题随时问我...';
+    answers[key] = val;
+    addEl(userBubble(val));
+    setTimeout(nextFn, 300);
+  }
+
+  opts.forEach(function(o){
+    var c = document.createElement('div');
+    c.className = 'qc-chip';
+    c.dataset.val = o;
+    c.style.cssText =
+      'padding:7px 14px;border-radius:20px;border:1.5px solid #c8d0de;' +
+      'font-size:13px;color:#333;background:#fff;cursor:pointer;' +
+      'transition:all 0.12s;user-select:none;';
+    c.textContent = o;
+    c.onmouseenter = function(){ if(c.style.pointerEvents!=='none'){ c.style.borderColor='#2456c8'; c.style.color='#2456c8'; } };
+    c.onmouseleave = function(){ if(c.style.pointerEvents!=='none' && !c.style.background.includes('2456c8')){ c.style.borderColor='#c8d0de'; c.style.color='#333'; } };
+    c.onclick = function(){
+      if(c.style.pointerEvents === 'none') return;
+      doAnswer(o);
+    };
+    wrap.appendChild(c);
+  });
+
+  // hook typed input — chat input bar also accepted
+  textQuestionCallback = function(val){
+    doAnswer(val);
+  };
+  var inp = $$('user-input');
+  if(inp) inp.placeholder = '或直接输入您的回答…';
+
+  return wrap;
+}
+
+function qualChips(opts, key, nextFn){
+  // legacy — keep for any existing call sites, delegates to conv version
+  return qualChipsConv(opts, key, nextFn);
+}
+
+function declineBooking(){
+  addEl(userBubble('暂时不了'));
+  addEl(agentBubble('没问题！有需要随时来找我 😊'));
+}
+
+function declineAll(){
+  addEl(userBubble('暂时不了'));
+  addEl(agentBubble('没问题！方案已为您保留，有需要随时回来 😊'));
+}
+
+function sendUserMsg2(){
+  var inp=$$('user-input');
+  inp.focus();
+  showFaqBar();
+}
+
+function buildInlineLeadCard(){
+  // Standalone lead card that can be addEl'd anywhere
+  var card = document.createElement('div');
+  card.className = 'welcome-card';
+  card.style.cssText = 'flex-shrink:0;';
+
+  var body = document.createElement('div');
+  body.className = 'wc-q-section';
+
+  var heading = document.createElement('div');
+  heading.style.cssText = 'font-size:13px;font-weight:700;color:#111;margin-bottom:3px;';
+  heading.textContent = '好的，顾问来帮您！';
+  body.appendChild(heading);
+
+  var subtext = document.createElement('div');
+  subtext.style.cssText = 'font-size:12px;color:#888;line-height:1.6;margin-bottom:12px;';
+  subtext.textContent = '留下联系方式，我们的专属顾问将在 2 小时内与您联系，为您量身推荐方案。';
+  body.appendChild(subtext);
+
+  var l1 = document.createElement('div'); l1.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l1.textContent='姓名';
+  var ni = document.createElement('input');
+  ni.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  ni.placeholder='您的姓名';
+
+  var l2 = document.createElement('div'); l2.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l2.textContent='手机号码';
+  var pi = document.createElement('input');
+  pi.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  pi.placeholder='请输入手机号'; pi.value='138 0000 0000';
+
+  var priv = document.createElement('div');
+  priv.style.cssText='font-size:11px;color:#bbb;margin-bottom:10px;line-height:1.5;';
+  priv.textContent='您的信息将被安全处理，仅用于顾问联系。';
+
+  var sb = document.createElement('button');
+  sb.textContent='立即联系顾问';
+  sb.style.cssText='width:100%;padding:11px;background:#2456c8;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;';
+  sb.onclick = function(){
+    var n = ni.value || '您';
+    var p = pi.value;
+    if(!p) return;
+    leadCaptured = true;
+    addEl(userBubble(n + ' / ' + p));
+    body.innerHTML =
+      '<div style="font-size:22px;margin-bottom:6px;">✅</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">信息已提交！</div>' +
+      '<div style="font-size:12px;color:#555;line-height:1.7;">我们的专属顾问将在 <strong>2 小时内</strong>主动联系您。</div>';
+    scrollDown();
+    setTimeout(function(){
+      function unanswered(key){ return !answers[key] || answers[key]==='（已跳过）' || answers[key]==='（未填）'; }
+      var hasUnanswered = unanswered('car') || unanswered('budget') || unanswered('interest');
+      if(hasUnanswered){
+        addEl(agentBubble('顺便帮顾问多了解一些您的情况，这样联系时可以更有针对性 😊'));
+        setTimeout(function(){ runConvQualFlow(function(){ expandFaqBar(); }); }, 400);
+      } else {
+        expandFaqBar();
+      }
+    }, 800);
+  };
+
+  body.appendChild(l1); body.appendChild(ni);
+  body.appendChild(l2); body.appendChild(pi);
+  body.appendChild(priv); body.appendChild(sb);
+  card.appendChild(body);
+  return card;
+}
+
+function quickLeadInline(){
+  // Called from mini card or bubble buttons — emit lead card at current scroll position
+  clearHintAnswerMode();
+  addEl(buildInlineLeadCard());
+}
+
+function quickLead(){
+  // Called from main form card shortcut — replace main card content with lead form
+  clearHintAnswerMode();
+  currentFormStep = formSteps.length - 1;
+
+  var pbRow = $$('fc-pb');
+  if(pbRow) pbRow.style.display = 'none';
+  if(formCard){
+    var sc = formCard.querySelector('.wc-shortcuts');
+    if(sc) sc.style.display = 'none';
+  }
+
+  var qa = $$('fc-qa');
+  if(!qa) return;
+  qa.innerHTML = '';
+
+  var heading = document.createElement('div');
+  heading.style.cssText = 'font-size:13px;font-weight:700;color:#111;margin-bottom:3px;';
+  heading.textContent = '好的，顾问来帮您！';
+  qa.appendChild(heading);
+
+  var subtext = document.createElement('div');
+  subtext.style.cssText = 'font-size:12px;color:#888;line-height:1.6;margin-bottom:12px;';
+  subtext.textContent = '留下联系方式，我们的专属顾问将在 2 小时内与您联系，为您量身推荐方案。';
+  qa.appendChild(subtext);
+
+  var l1 = document.createElement('div'); l1.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l1.textContent='姓名';
+  var ni = document.createElement('input'); ni.id='ql-ni';
+  ni.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  ni.placeholder='您的姓名';
+
+  var l2 = document.createElement('div'); l2.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:4px;'; l2.textContent='手机号码';
+  var pi = document.createElement('input'); pi.id='ql-pi';
+  pi.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  pi.placeholder='请输入手机号'; pi.value='138 0000 0000';
+
+  var priv = document.createElement('div');
+  priv.style.cssText='font-size:11px;color:#bbb;margin-bottom:10px;line-height:1.5;';
+  priv.textContent='您的信息将被安全处理，仅用于顾问联系。';
+
+  var sb = document.createElement('button');
+  sb.textContent='立即联系顾问';
+  sb.style.cssText='width:100%;padding:11px;background:#2456c8;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;';
+  sb.onclick = function(){
+    var n = $$('ql-ni').value || '您';
+    var p = $$('ql-pi').value;
+    if(!p){ return; }
+    leadCaptured = true;
+    addEl(userBubble(n + ' / ' + p));
+    qa.innerHTML = '';
+    var confirm = document.createElement('div');
+    confirm.style.cssText = 'padding:4px 0 8px;';
+    confirm.innerHTML =
+      '<div style="font-size:22px;margin-bottom:6px;">✅</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">信息已提交！</div>' +
+      '<div style="font-size:12px;color:#555;line-height:1.7;">我们的专属顾问将在 <strong>2 小时内</strong>主动联系您，为您准备个性化购车方案。</div>' +
+      '<div style="font-size:11px;color:#aaa;margin-top:8px;">如有急需，也可直接致电 <span style="color:#2456c8;font-weight:600;">400-820-1188</span></div>';
+    qa.appendChild(confirm);
+    scrollDown();
+    setTimeout(function(){
+      function unanswered(key){ return !answers[key] || answers[key]==='（已跳过）' || answers[key]==='（未填）'; }
+      var hasUnanswered = unanswered('car') || unanswered('budget') || unanswered('interest');
+      if(hasUnanswered){
+        addEl(agentBubble('顺便帮顾问多了解一些您的情况，这样联系时可以更有针对性 😊'));
+        setTimeout(function(){ runConvQualFlow(function(){ expandFaqBar(); }); }, 400);
+      } else {
+        expandFaqBar();
+      }
+    }, 800);
+  };
+
+  qa.appendChild(l1); qa.appendChild(ni);
+  qa.appendChild(l2); qa.appendChild(pi);
+  qa.appendChild(priv); qa.appendChild(sb);
+  scrollDown();
+}
+
+
+function showContactPrompt(){
+  addEl(agentBubble('好的！留下联系方式，顾问会帮您锁定时段 😊'));
+  var f=document.createElement('div'); f.className='contact-form';
+  var nr=document.createElement('div'); nr.className='contact-row';
+  var ni=document.createElement('input'); ni.className='fi'; ni.placeholder='姓名'; ni.id='ni2'; ni.style.maxWidth='80px';
+  var pi=document.createElement('input'); pi.className='fi'; pi.placeholder='手机号码'; pi.id='pi2';
+  var sb=document.createElement('button'); sb.className='sub-btn'; sb.textContent='提交';
+  sb.onclick=function(){
+    var n=$$('ni2').value||'您'; var p=$$('pi2').value||'已记录';
+    addEl(userBubble(n+' / '+p)); f.remove();
+    addEl(agentBubble('已收到！顾问会在 2 小时内与您确认预约 ✅'));
+  };
+  nr.appendChild(ni); nr.appendChild(pi); nr.appendChild(sb);
+  f.appendChild(nr); addEl(f);
+}
+
+function runConvQualFlow(onComplete){
+  // Helper: is this answer considered "not answered"?
+  function unanswered(key){ return !answers[key] || answers[key]==='（已跳过）' || answers[key]==='（未填）'; }
+
+  var qualSteps = [];
+  if(unanswered('car')){
+    qualSteps.push(function(next){
+      addEl(agentBubble('您目前有在开车吗？'));
+      setTimeout(function(){ addEl(qualChipsConv(['在开燃油车','在开新能源','暂时没有'],'car',next)); }, 300);
+    });
+  }
+  if(unanswered('budget')){
+    qualSteps.push(function(next){
+      addEl(agentBubble('您的购车预算大概在哪个区间？'));
+      setTimeout(function(){ addEl(qualChipsConv(['50万以下','50–70万','70万以上','还在考虑中'],'budget',next)); }, 300);
+    });
+  }
+  if(unanswered('interest')){
+    qualSteps.push(function(next){
+      addEl(agentBubble('您对 X5 哪方面最感兴趣呢？随便说说就好 😊'));
+      var inp = $$('user-input');
+      if(inp){ inp.placeholder = '在这里输入您的回答…'; inp.focus(); }
+      textQuestionCallback = function(val){
+        answers['interest'] = val;
+        textQuestionCallback = null;
+        clearHintAnswerMode();
+        addEl(userBubble(val));
+        var inp2 = $$('user-input');
+        if(inp2) inp2.placeholder = '有问题随时问我...';
+        setTimeout(next, 300);
+      };
+      setHintAnswerMode(['驾驶体验', '空间舒适性', '智能配置', '外观设计'], function(val){ if(textQuestionCallback) textQuestionCallback(val); });
+    });
+  }
+  if(qualSteps.length === 0){
+    if(onComplete) onComplete();
+    return;
+  }
+  function runStep(i){
+    if(i >= qualSteps.length){
+      setTimeout(function(){
+        addEl(agentBubble('很好！顾问现在对您的情况有了更全面的了解，联系时会更有针对性 👍'));
+        setTimeout(function(){ if(onComplete) onComplete(); }, 300);
+      }, 300);
+      return;
+    }
+    qualSteps[i](function(){ setTimeout(function(){ runStep(i+1); }, 400); });
+  }
+  runStep(0);
+}
+
+function resetChat(){ enterChat('Can I book an appointment?'); }
+function backToFeed(){
+  $$('stage-chat').style.display='none';
+  $$('stage-feed').style.display='flex';
+}
+</script>
+</body>
+</html>
