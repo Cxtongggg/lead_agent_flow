@@ -387,6 +387,22 @@
     margin-left: 8px; flex-shrink: 0; display: none;
   }
   .edit-btn:hover { background: #e8effd; }
+  .skip-btn {
+    font-size: 11px; color: #aaa; background: none;
+    border: none; padding: 6px 0 0; cursor: pointer;
+    text-decoration: underline; display: block;
+  }
+  .skip-btn:hover { color: #666; }
+  .chip.other-chip { border-style: dashed; color: #888; }
+  .chip.other-chip:hover { border-color: #2456c8; color: #2456c8; }
+  .free-input-row { display: flex; gap: 5px; margin-top: 8px; }
+  .free-input {
+    flex: 1; border: 1px solid #2456c8; border-radius: 8px;
+    padding: 6px 9px; font-size: 12px; color: #111;
+    outline: none; background: #f5f8ff; font-family: inherit;
+  }
+  .free-confirm { padding: 6px 10px; background: #2456c8; color: #fff; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; }
+  .dm-note { font-size: 11px; color: #888; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
   .inline-form.locked .edit-btn { display: inline-block; }
   .chip.sel { background: #e8effd; border-color: #2456c8; color: #2456c8; font-weight: 600; }
 
@@ -495,13 +511,23 @@
   }
 
   /* quick questions */
-  .quick-qs {
-    padding: 6px 12px 4px;
+  .faq-bar {
+    background: #fff;
+    border-top: 0.5px solid #eee;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.25s ease, padding 0.25s ease;
+    padding: 0;
+  }
+  .faq-bar.visible {
+    max-height: 80px;
+    padding: 6px 0 4px;
+  }
+  .faq-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    background: #fff;
-    border-top: 0.5px solid #eee;
+    padding: 0 12px;
   }
   .qq {
     font-size: 11px;
@@ -665,17 +691,22 @@
     <!-- messages -->
     <div class="chat-body" id="cb"></div>
 
-    <!-- quick questions -->
-    <div class="quick-qs">
-      <div class="qq" onclick="askFaq('油耗怎么样？')">油耗怎么样？</div>
-      <div class="qq" onclick="askFaq('有哪些颜色？')">有哪些颜色？</div>
-      <div class="qq" onclick="askFaq('支持贷款吗？')">支持贷款吗？</div>
-      <div class="qq" onclick="askFaq('试驾怎么预约？')">试驾怎么预约？</div>
+    <!-- faq bar: hidden during form, shown on input focus or after completion -->
+    <div class="faq-bar" id="faq-bar">
+      <div class="faq-chips">
+        <div class="qq" onclick="askFaqAndCollapse('油耗怎么样？')">油耗怎么样？</div>
+        <div class="qq" onclick="askFaqAndCollapse('有哪些颜色？')">有哪些颜色？</div>
+        <div class="qq" onclick="askFaqAndCollapse('支持贷款吗？')">支持贷款吗？</div>
+        <div class="qq" onclick="askFaqAndCollapse('试驾怎么预约？')">试驾怎么预约？</div>
+      </div>
     </div>
 
     <!-- input bar -->
     <div class="input-bar">
-      <input class="chat-input" id="user-input" placeholder="有问题随时问我..." onkeydown="if(event.key==='Enter')sendUserMsg()" />
+      <input class="chat-input" id="user-input" placeholder="有问题随时问我..."
+        onkeydown="if(event.key==='Enter')sendUserMsg()"
+        onfocus="showFaqBar()"
+        onblur="hideFaqBarIfNotDone()" />
       <button class="send-btn" onclick="sendUserMsg()" aria-label="发送">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
@@ -719,14 +750,46 @@ function removeTyping(){ var t=$$('typing'); if(t) t.remove(); }
 function progressBar(cur, total){
   var p = document.createElement('div'); p.className = 'progress';
   for(var i=0;i<total;i++){
-    var d=document.createElement('div');
-    d.className='pd'+(i<cur?' done':i===cur?' cur':'');
-    p.appendChild(d);
+    (function(idx){
+      var d=document.createElement('div');
+      d.className='pd'+(idx<cur?' done':idx===cur?' cur':'');
+      // clickable: done steps jump back, future steps silently skip forward
+      d.style.cursor='pointer';
+      d.title = idx < cur ? '点击返回此步' : '';
+      d.onclick=function(){
+        if(idx < cur){
+          // jump back to that step — find the form and trigger edit
+          var formId='form-step'+(idx+1);
+          var targetForm=$$(formId);
+          if(targetForm){
+            var eb=targetForm.querySelector('.edit-btn');
+            if(eb) eb.click();
+            setTimeout(function(){ targetForm.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
+          }
+        } else if(idx > cur){
+          // silently skip forward — mark current step as skipped and advance
+          var formId='form-step'+cur;
+          var targetForm=$$(formId);
+          if(targetForm && !targetForm.classList.contains('locked')){
+            var key=targetForm.dataset.key;
+            if(key && !answers[key]) answers[key]='（已跳过）';
+            targetForm.classList.add('locked');
+            // visually grey out unselected chips
+            targetForm.querySelectorAll('.chip:not(.sel)').forEach(function(c){
+              c.classList.add('disabled'); c.style.cursor='default';
+            });
+            if(cur===1) setTimeout(showStep2, 200);
+            else if(cur===2) setTimeout(showStep3, 200);
+          }
+        }
+      };
+      p.appendChild(d);
+    })(i);
   }
   return p;
 }
 
-function chipForm(q, opts, key, nextFn, formId){
+function chipForm(q, opts, key, nextFn, formId, skippable){
   var f=document.createElement('div'); f.className='inline-form'; f.id=formId||'';
 
   var hdr=document.createElement('div'); hdr.className='form-header';
@@ -735,12 +798,14 @@ function chipForm(q, opts, key, nextFn, formId){
   hdr.appendChild(ql); hdr.appendChild(eb);
 
   var cg=document.createElement('div'); cg.className='chip-group';
+  var freeInputRow=null;
 
   function lockForm(){
     f.classList.add('locked');
     cg.querySelectorAll('.chip').forEach(function(x){
       x.classList.add('disabled'); x.style.cursor='default';
     });
+    if(freeInputRow) freeInputRow.style.display='none';
   }
   function unlockForm(){
     f.classList.remove('locked');
@@ -749,34 +814,87 @@ function chipForm(q, opts, key, nextFn, formId){
     });
   }
 
+  function doSelect(val, wasEdit){
+    // clear all, then re-mark the selected one after lock
+    answers[key]=val;
+    f.classList.remove('editing');
+    lockForm();
+    // re-apply sel on the chosen chip (lockForm only adds disabled, doesn't remove sel)
+    cg.querySelectorAll('.chip').forEach(function(x){
+      if(x.textContent.trim()===val) x.classList.add('sel');
+      else x.classList.remove('sel');
+    });
+    if(wasEdit){ resumeFromStep(parseInt(f.dataset.step||'1')); }
+    else { setTimeout(function(){ nextFn(); }, 220); }
+  }
+
   opts.forEach(function(o){
     var c=document.createElement('div'); c.className='chip'; c.textContent=o;
     c.onclick=function(){
       if(c.classList.contains('disabled')) return;
-      var wasEdit = f.classList.contains('editing');
-      cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+      var wasEdit=f.classList.contains('editing');
       c.classList.add('sel');
-      answers[key]=o;
-      f.classList.remove('editing');
-      lockForm();
-
-      if(wasEdit){
-        // editing mode: don't truncate subsequent steps, just re-lock and
-        // advance to wherever the flow had reached
-        resumeFromStep();
+      if(o==='其他'){
+        // show free input
+        if(!freeInputRow){
+          freeInputRow=document.createElement('div'); freeInputRow.className='free-input-row';
+          var fi=document.createElement('input'); fi.className='free-input'; fi.placeholder='请描述一下…'; fi.id='free-'+key;
+          var fc=document.createElement('button'); fc.className='free-confirm'; fc.textContent='确认';
+          fc.onclick=function(){
+            var val=fi.value.trim()||'其他';
+            doSelect(val, wasEdit);
+          };
+          freeInputRow.appendChild(fi); freeInputRow.appendChild(fc);
+          f.appendChild(freeInputRow);
+          setTimeout(function(){ fi.focus(); }, 50);
+        } else {
+          freeInputRow.style.display='flex';
+        }
       } else {
-        setTimeout(function(){ nextFn(); }, 220);
+        if(freeInputRow) freeInputRow.style.display='none';
+        doSelect(o, wasEdit);
       }
     };
     cg.appendChild(c);
   });
 
+  // "其他" chip
+  var otherChip=document.createElement('div'); otherChip.className='chip other-chip'; otherChip.textContent='其他';
+  otherChip.onclick=function(){
+    if(otherChip.classList.contains('disabled')) return;
+    var wasEdit=f.classList.contains('editing');
+    cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
+    otherChip.classList.add('sel');
+    if(!freeInputRow){
+      freeInputRow=document.createElement('div'); freeInputRow.className='free-input-row';
+      var fi=document.createElement('input'); fi.className='free-input'; fi.placeholder='请描述一下…'; fi.id='free-'+key;
+      var fc=document.createElement('button'); fc.className='free-confirm'; fc.textContent='确认';
+      fc.onclick=function(){
+        var val=fi.value.trim()||'其他';
+        doSelect(val, wasEdit);
+      };
+      freeInputRow.appendChild(fi); freeInputRow.appendChild(fc);
+      f.appendChild(freeInputRow);
+      setTimeout(function(){ fi.focus(); }, 50);
+    } else { freeInputRow.style.display='flex'; }
+  };
+  cg.appendChild(otherChip);
+
+  // direct contact shortcut — only shown before lead is captured
+  if(!leadCaptured){
+    var directBtn=document.createElement('button'); directBtn.className='skip-btn';
+    directBtn.style.cssText='color:#2456c8;font-size:11px;margin-top:8px;text-decoration:none;display:flex;align-items:center;gap:3px;background:none;border:none;padding:0;cursor:pointer;';
+    directBtn.innerHTML='<span style="font-size:13px">⚡</span> 直接与顾问讨论';
+    directBtn.onclick=function(){ lockForm(); quickLead(); };
+    f.appendChild(hdr); f.appendChild(cg); f.appendChild(directBtn);
+  } else {
+    f.appendChild(hdr); f.appendChild(cg);
+  }
+
   eb.onclick=function(){
-    // mark as editing — unlock only this card, leave everything else intact
     f.classList.add('editing');
     unlockForm();
     cg.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('sel'); });
-    // restore previous selection visually
     if(answers[key]){
       cg.querySelectorAll('.chip').forEach(function(x){
         if(x.textContent===answers[key]) x.classList.add('sel');
@@ -784,31 +902,47 @@ function chipForm(q, opts, key, nextFn, formId){
     }
   };
 
-  f.appendChild(hdr); f.appendChild(cg); return f;
+  return f;
 }
 
 // Resume from the furthest step already reached, without re-rendering completed steps
-function resumeFromStep(){
-  // All existing form cards stay. Just continue from current step state.
-  if(step===4){
-    // already at result — re-render result to reflect updated answers
-    // remove old result card and re-append
-    var cb=cbody(); var nodes=Array.from(cb.children);
-    // find and remove result-card and anything after step3 form
-    var form3=$$('form-step3');
-    if(form3){
-      var idx=nodes.indexOf(form3);
-      for(var i=nodes.length-1;i>idx;i--){ cb.removeChild(nodes[i]); }
-      step=3;
+function resumeFromStep(editedStep){
+  var maxStep = step;
+
+  // Restore sel state on the edited form (answer is already in answers[key])
+  var editedForm = $$('form-step' + editedStep);
+  if(editedForm){
+    var key = editedForm.dataset.key;
+    var val = answers[key];
+    if(val){
+      editedForm.querySelectorAll('.chip').forEach(function(c){
+        if(c.textContent.trim() === val) c.classList.add('sel');
+        else c.classList.remove('sel');
+      });
+    }
+  }
+
+  // For each subsequent step already in DOM, just restore their sel state — don't re-render
+  for(var s = editedStep + 1; s <= maxStep; s++){
+    var form = $$('form-step' + s);
+    if(form){
+      var k = form.dataset.key;
+      var v = answers[k];
+      if(v){
+        form.querySelectorAll('.chip').forEach(function(c){
+          if(c.textContent.trim() === v){ c.classList.add('sel'); c.classList.add('disabled'); }
+          else { c.classList.remove('sel'); c.classList.add('disabled'); }
+          c.style.cursor = 'default';
+        });
+        form.classList.add('locked');
+      }
+    } else if(s === 4){
+      // result card not in DOM yet — render it
       setTimeout(function(){ showResult(); }, 300);
     }
-  } else if(step===3){
-    // contact form is already there, nothing to do
-  } else if(step===2){
-    setTimeout(function(){ showStep3(); }, 300);
-  } else if(step===1){
-    setTimeout(function(){ showStep2(); }, 300);
   }
+
+  scrollDown();
 }
 
 function enterChat(firstMsg){
@@ -816,6 +950,9 @@ function enterChat(firstMsg){
   var sc=$$('stage-chat'); sc.style.display='flex';
   cbody().innerHTML='';
   step=0; answers={};
+  faqDone=false; leadCaptured=false; faqAskedCount=0;
+  var bar=$$('faq-bar'); if(bar){ bar.classList.remove('visible'); }
+
 
   // ad source card (sent as user message, tappable to go back)
   var wrap=document.createElement('div'); wrap.className='ad-card-wrap';
@@ -861,7 +998,7 @@ function showStep1(){
   setTimeout(function(){
     removeTyping();
     var f=chipForm('您目前有在开车吗？',['在开燃油车','在开新能源','暂时没有'],'car',showStep2,'form-step1');
-    f.dataset.step='1'; addEl(f); step=1;
+    f.dataset.step='1'; f.dataset.key='car'; addEl(f); step=1;
   }, 650);
 }
 
@@ -870,72 +1007,196 @@ function showStep2(){
   showTyping();
   setTimeout(function(){
     removeTyping();
-    var f=chipForm('您的购车预算区间？',['50万以下','50–70万','70万以上','还在考虑中'],'budget',showStep3,'form-step2');
-    f.dataset.step='2'; addEl(f); step=2;
+    var f=chipForm('您的购车预算区间？',['50万以下','50–70万','70万以上','还在考虑中'],'budget',showStep3,'form-step2',true);
+    f.dataset.step='2'; f.dataset.key='budget'; addEl(f); step=2;
   }, 550);
 }
 
 function showStep3(){
   addEl(progressBar(2,3));
-  addEl(agentBubble('了解 ✓ 最后一步，留下联系方式，我帮您安排一次无压力试驾 🚗'));
 
-  var f=document.createElement('div'); f.className='contact-form';
-  var ql=document.createElement('div'); ql.style.cssText='font-size:13px;color:#111;line-height:1.5;'; ql.textContent='您的姓名和手机号';
-  var nr=document.createElement('div'); nr.className='contact-row';
-  var ni=document.createElement('input'); ni.className='fi'; ni.placeholder='姓名'; ni.id='ni'; ni.style.maxWidth='75px';
-  var pi=document.createElement('input'); pi.className='fi'; pi.placeholder='手机号码'; pi.id='pi';
-  var sb=document.createElement('button'); sb.className='sub-btn'; sb.textContent='提交';
+  var f=document.createElement('div'); f.className='contact-form'; f.id='form-step3';
+  f.style.cssText='background:#fff;border:0.5px solid #e5e5e5;border-radius:16px;padding:14px 14px 12px;align-self:flex-start;max-width:92%;';
+
+  // header inside card
+  var cardHeader=document.createElement('div');
+  cardHeader.style.cssText='margin-bottom:12px;';
+  cardHeader.innerHTML='<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:3px;">最后一步，留下联系方式</div><div style="font-size:11px;color:#aaa;">手机号仅用于顾问回电，不会用于其他用途</div>';
+  f.appendChild(cardHeader);
+
+  var l1=document.createElement('div'); l1.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:5px;'; l1.textContent='姓名';
+  var ni=document.createElement('input'); ni.id='ni';
+  ni.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  ni.placeholder='您的姓名';
+
+  var l2=document.createElement('div'); l2.style.cssText='font-size:12px;font-weight:600;color:#111;margin-bottom:5px;'; l2.textContent='手机号码';
+  var pi=document.createElement('input'); pi.id='pi';
+  pi.style.cssText='width:100%;border:1px solid #e0e0e0;border-radius:10px;padding:9px 11px;font-size:13px;color:#111;outline:none;background:#fafafa;margin-bottom:10px;box-sizing:border-box;';
+  pi.placeholder='请输入手机号'; pi.value='138 0000 0000';
+
+  var priv=document.createElement('div');
+  priv.style.cssText='font-size:11px;color:#bbb;margin-bottom:10px;line-height:1.5;';
+  priv.textContent='您的信息将被安全处理，仅用于与顾问联系，不会用于其他用途。';
+
+  var sb=document.createElement('button'); sb.textContent='提交';
+  sb.style.cssText='width:100%;padding:11px;background:#2456c8;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;';
   sb.onclick=function(){
-    var n=$$('ni').value||'您'; var p=$$('pi').value||'已记录';
-    addEl(userBubble(n+' / '+p)); f.remove(); showResult();
+    var n=$$('ni').value||'您'; var p=$$('pi').value;
+    if(!p){ addEl(agentBubble('请填写手机号，方便顾问与您联系 😊')); return; }
+    leadCaptured=true; addEl(userBubble(n+' / '+p)); showResult();
   };
-  nr.appendChild(ni); nr.appendChild(pi); nr.appendChild(sb);
 
-  var priv=document.createElement('div'); priv.className='privacy-note';
-  priv.innerHTML='🔒 仅用于预约，不作其他用途';
-
-  f.appendChild(ql); f.appendChild(nr); f.appendChild(priv);
+  f.appendChild(l1); f.appendChild(ni);
+  f.appendChild(l2); f.appendChild(pi);
+  f.appendChild(priv); f.appendChild(sb);
   addEl(f); step=3;
 }
 
-function showResult(){
+// chooseDM removed
+
+function showResult(skipMode){
   addEl(progressBar(3,3));
   showTyping();
   setTimeout(function(){
     removeTyping();
-    addEl(agentBubble('根据您的情况，为您匹配到专属方案 ✨'));
 
-    var rc=document.createElement('div'); rc.className='result-card';
-    rc.innerHTML=
-      '<div class="rc-title">您的专属方案</div>'+
-      '<div class="rc-row"><span class="rk">推荐车型</span><span class="rv">BMW X5 xDrive40i</span></div>'+
-      '<div class="rc-row"><span class="rk">参考落地价</span><span class="rv">约 64.8 万</span></div>'+
-      '<div class="rc-row"><span class="rk">最近门店</span><span class="rv">中关村宝马体验中心</span></div>'+
-      '<div class="rc-row"><span class="rk">可预约时段</span><span class="rv">明日 10:00 / 14:00</span></div>'+
-      '<div class="cta-row">'+
-        '<button class="cta-p">预约试驾</button>'+
-        '<button class="cta-s">继续咨询</button>'+
-      '</div>';
-    addEl(rc);
+    // single confirm bubble
+    addEl(agentBubble('信息已收到 ✅ 顾问将在 <strong>24 小时内</strong>致电联系您 📞'));
 
+    // match card + CTA merged into one card
     setTimeout(function(){
-      addEl(agentBubble('有任何问题随时问我，比如贷款方案、颜色配置等 😊'));
+      var hasQual = (!answers['car'] || answers['car']==='（已跳过）') ||
+                    (!answers['budget'] || answers['budget']==='（已跳过）');
+
+      var rc=document.createElement('div'); rc.className='result-card';
+      var chips =
+        '<div class="chip" style="background:#2456c8;color:#fff;border-color:#2456c8" onclick="startBooking()">📍 预约试驾</div>';
+      if(hasQual){
+        chips += '<div class="chip" onclick="showQualificationFollowUp()">获取更精准的方案推荐</div>';
+      }
+      rc.innerHTML=
+        '<div class="rc-title">您的专属方案</div>'+
+        '<div class="rc-row"><span class="rk">推荐车型</span><span class="rv">BMW X5 xDrive40i</span></div>'+
+        '<div class="rc-row"><span class="rk">参考落地价</span><span class="rv">约 64.8 万</span></div>'+
+        '<div style="margin-top:10px"><div style="font-size:12px;color:#888;margin-bottom:6px">接下来？</div>'+
+        '<div class="chip-group">'+chips+'</div></div>';
+      addEl(rc);
       step=4;
+      expandFaqBar();
     }, 400);
+
   }, 950);
+}
+
+function startBooking(){
+  addEl(userBubble('预约试驾'));
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    addEl(agentBubble('已获取您的位置 📍 以下是距您最近的门店及可预约时段'));
+
+    var stores=[
+      {name:'中关村宝马体验中心', dist:'1.2km', slots:['今天 15:00','明天 10:00','明天 14:00']},
+      {name:'朝阳区宝马授权店',   dist:'3.5km', slots:['明天 11:00','明天 16:00','后天 10:00']},
+      {name:'顺义宝马4S店',       dist:'8.1km', slots:['明天 09:30','后天 14:00','后天 16:00']},
+    ];
+
+    stores.forEach(function(s){
+      var card=document.createElement('div');
+      card.style.cssText='background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:11px 12px;margin-bottom:8px;';
+
+      var headerRow=document.createElement('div');
+      headerRow.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
+      headerRow.innerHTML=
+        '<div style="font-size:13px;font-weight:600;color:#111;">'+s.name+'</div>'+
+        '<div style="font-size:11px;color:#aaa;">📍 '+s.dist+'</div>';
+
+      var slotRow=document.createElement('div');
+      slotRow.style.cssText='display:flex;flex-wrap:wrap;gap:5px;';
+
+      s.slots.forEach(function(t){
+        var sc=document.createElement('div'); sc.className='chip';
+        sc.style.cssText='font-size:11px;padding:4px 9px;';
+        sc.textContent=t;
+        sc.onclick=function(){
+          if(sc.classList.contains('disabled')) return;
+          // lock all slot chips across all store cards
+          document.querySelectorAll('.slot-chip').forEach(function(x){
+            x.classList.add('disabled'); x.style.cursor='default';
+          });
+          sc.classList.add('sel');
+          addEl(userBubble(s.name+' · '+t));
+          setTimeout(function(){ showBookingConfirm(s.name, t); }, 300);
+        };
+        sc.classList.add('slot-chip');
+        slotRow.appendChild(sc);
+      });
+
+      card.appendChild(headerRow);
+      card.appendChild(slotRow);
+      addEl(card);
+    });
+
+  }, 800);
+}
+
+// showTimePicker removed — slots shown inline with store cards
+
+function showBookingConfirm(store, time){
+  showTyping();
+  setTimeout(function(){
+    removeTyping();
+    var bc=document.createElement('div'); bc.className='result-card';
+    bc.innerHTML=
+      '<div class="rc-title" style="color:#1aac6e">✅ 预约成功</div>'+
+      '<div class="rc-row"><span class="rk">门店</span><span class="rv">'+store+'</span></div>'+
+      '<div class="rc-row"><span class="rk">时间</span><span class="rv">'+time+'</span></div>'+
+      '<div class="rc-row"><span class="rk">车型</span><span class="rv">BMW X5 xDrive40i</span></div>'+
+      '<div class="rc-row"><span class="rk">顾问</span><span class="rv">张经理 将接待您</span></div>'+
+      '<div style="font-size:11px;color:#aaa;margin-top:8px;line-height:1.6">确认短信将发送至您的手机，如需更改请联系顾问</div>';
+    addEl(bc);
+    addEl(agentBubble('期待您的到来 🚗 有任何问题随时问我 😊'));
+  }, 800);
 }
 
 function makeFaqBubble(ans, onResume){
   var fa=document.createElement('div'); fa.className='faq-bubble';
   var p=document.createElement('p'); p.textContent=ans; fa.appendChild(p);
   if(onResume){
-    var r=document.createElement('div'); r.className='resume-link';
-    r.textContent='↩ 继续填写信息';
-    r.onclick=function(){
-      r.style.display='none';   // hide link, keep FAQ answer visible
-      onResume();
+    faqAskedCount++;
+    var isFirstFaq = (faqAskedCount === 1);
+
+    if(!isFirstFaq){
+      // subsequent FAQs: show hint + clickable links
+      var resumeWrap=document.createElement('div'); resumeWrap.style.cssText='margin-top:8px;';
+      var resumeHint=document.createElement('div'); resumeHint.style.cssText='font-size:11px;color:#888;margin-bottom:6px;';
+      resumeHint.textContent='希望对您有帮助！继续完成问题，我为您匹配最合适的方案 👇';
+      var actionRow=document.createElement('div'); actionRow.style.cssText='display:flex;align-items:center;gap:12px;';
+      var r=document.createElement('div'); r.className='resume-link'; r.style.cssText='margin:0;';
+      r.textContent='↩ 继续填写';
+      r.onclick=function(){
+        resumeWrap.style.display='none';
+        onResume();
+      };
+    var sep=document.createElement('span'); sep.style.cssText='color:#ddd;font-size:12px;'; sep.textContent='|';
+    var dl=document.createElement('div'); dl.className='resume-link'; dl.style.cssText='margin:0;color:#2456c8;display:flex;align-items:center;gap:3px;';
+    dl.innerHTML='<span style="font-size:12px">⚡</span> 直接与顾问讨论';
+    dl.onclick=function(){
+      if(leadCaptured) return;
+      resumeWrap.style.display='none';
+      quickLead();
     };
-    fa.appendChild(r);
+    actionRow.appendChild(r); actionRow.appendChild(sep); actionRow.appendChild(dl);
+      resumeWrap.appendChild(resumeHint); resumeWrap.appendChild(actionRow);
+      fa.appendChild(resumeWrap);
+    } else {
+      // first FAQ: just add a small hint line, then immediately append the next form step
+      var hint=document.createElement('div');
+      hint.style.cssText='font-size:11px;color:#aaa;margin-top:6px;';
+      hint.textContent='希望对您有帮助 😊';
+      fa.appendChild(hint);
+      setTimeout(function(){ onResume(); }, 600);
+    }
   }
   return fa;
 }
@@ -973,6 +1234,129 @@ function resumeFlow(){
   if(savedStep<=1) showStep1();
   else if(savedStep===2) showStep2();
   else if(savedStep===3) showStep3();
+}
+
+var faqDone = false; // true after form is fully completed
+var leadCaptured = false; // true after phone number submitted
+var faqAskedCount = 0; // track how many FAQs asked during form flow
+
+function showFaqBar(){
+  $$('faq-bar').classList.add('visible');
+}
+
+function hideFaqBarIfNotDone(){
+  // hide on blur only if form not yet completed
+  if(!faqDone){
+    setTimeout(function(){
+      // small delay so chip clicks register before hiding
+      $$('faq-bar').classList.remove('visible');
+    }, 200);
+  }
+}
+
+function askFaqAndCollapse(q){
+  askFaq(q);
+  // after picking a chip, hide bar again if form not done
+  if(!faqDone){
+    $$('faq-bar').classList.remove('visible');
+  }
+}
+
+// toggleFaq removed — bar is now controlled by input focus and form completion
+
+function expandFaqBar(){
+  // called when form is fully done — bar stays visible permanently
+  faqDone=true;
+  $$('faq-bar').classList.add('visible');
+}
+
+function showQualificationFollowUp(){
+  addEl(userBubble('获取更精准的方案推荐'));
+  addEl(agentBubble('好的！多了解一些，顾问联系您时会更有针对性 😊'));
+  setTimeout(function(){
+    // ask remaining unanswered qualification questions
+    var qualSteps=[];
+    if(!answers['car'] || answers['car']==='（已跳过）'){
+      qualSteps.push(function(next){
+        addEl(chipForm('您目前有在开车吗？',['在开燃油车','在开新能源','暂时没有'],'car',next,'form-qual1'));
+      });
+    }
+    if(!answers['budget'] || answers['budget']==='（已跳过）'){
+      qualSteps.push(function(next){
+        addEl(chipForm('您的购车预算大概在哪个区间？',['50万以下','50–70万','70万以上','还在考虑中'],'budget',next,'form-qual2'));
+      });
+    }
+    if(qualSteps.length===0){
+      // all answered already
+      addEl(agentBubble('您的信息已经很完整了，顾问会根据您的情况充分准备 👍'));
+      return;
+    }
+    // chain the steps
+    function runStep(i){
+      if(i >= qualSteps.length){
+        setTimeout(function(){
+          addEl(agentBubble('很好！顾问现在对您的情况有了更全面的了解，联系时会更有针对性 👍'));
+        }, 300);
+        return;
+      }
+      qualSteps[i](function(){ setTimeout(function(){ runStep(i+1); }, 400); });
+    }
+    runStep(0);
+  }, 600);
+}
+
+function declineBooking(){
+  addEl(userBubble('暂时不了'));
+  addEl(agentBubble('没问题！有需要随时来找我 😊'));
+}
+
+function declineAll(){
+  addEl(userBubble('暂时不了'));
+  addEl(agentBubble('没问题！方案已为您保留，有需要随时回来 😊'));
+}
+
+function sendUserMsg2(){
+  var inp=$$('user-input');
+  inp.focus();
+  showFaqBar();
+}
+
+function quickLead(){
+  // hide the shortcut bar
+  var qlb=$$('quick-lead-bar'); if(qlb) qlb.style.display='none';
+  addEl(userBubble('直接与顾问讨论'));
+  addEl(agentBubble('太好了！留下联系方式，顾问会尽快联系您 😊'));
+  // show contact form inline
+  var f=document.createElement('div'); f.className='contact-form';
+  var nr=document.createElement('div'); nr.className='contact-row';
+  var ni=document.createElement('input'); ni.className='fi'; ni.placeholder='姓名'; ni.id='ni-quick'; ni.style.maxWidth='80px';
+  var pi=document.createElement('input'); pi.className='fi'; pi.placeholder='手机号码'; pi.id='pi-quick'; pi.value='138 0000 0000';
+  var sb=document.createElement('button'); sb.className='sub-btn'; sb.textContent='提交';
+  sb.onclick=function(){
+    var n=$$('ni-quick').value||'您'; var p=$$('pi-quick').value||'已记录';
+    leadCaptured=true; addEl(userBubble(n+' / '+p)); f.remove();
+    showResult(false);
+  };
+  nr.appendChild(ni); nr.appendChild(pi); nr.appendChild(sb);
+  var priv=document.createElement('div'); priv.className='privacy-note';
+  priv.innerHTML='🔒 仅用于联系，不作其他用途';
+  f.appendChild(nr); f.appendChild(priv); addEl(f);
+}
+
+function showContactPrompt(){
+  addEl(agentBubble('好的！留下联系方式，顾问会帮您锁定时段 😊'));
+  var f=document.createElement('div'); f.className='contact-form';
+  var nr=document.createElement('div'); nr.className='contact-row';
+  var ni=document.createElement('input'); ni.className='fi'; ni.placeholder='姓名'; ni.id='ni2'; ni.style.maxWidth='80px';
+  var pi=document.createElement('input'); pi.className='fi'; pi.placeholder='手机号码'; pi.id='pi2';
+  var sb=document.createElement('button'); sb.className='sub-btn'; sb.textContent='提交';
+  sb.onclick=function(){
+    var n=$$('ni2').value||'您'; var p=$$('pi2').value||'已记录';
+    addEl(userBubble(n+' / '+p)); f.remove();
+    addEl(agentBubble('已收到！顾问会在 2 小时内与您确认预约 ✅'));
+  };
+  nr.appendChild(ni); nr.appendChild(pi); nr.appendChild(sb);
+  f.appendChild(nr); addEl(f);
 }
 
 function resetChat(){ enterChat('Can I book an appointment?'); }
